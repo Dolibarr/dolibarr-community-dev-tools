@@ -40,3 +40,21 @@
     color: #575756;
     letter-spacing: 1.5px;
 }
+
+
+/**
+ * Log manager
+ */
+
+.log-manager{
+	color: #666;
+}
+
+.log-manager[log-type="1"]{
+	color: darkred;
+	font-weight: bold;
+}
+.log-manager[log-type="2"]{
+	color: darkgreen;
+	font-weight: bold;
+}

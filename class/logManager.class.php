@@ -134,7 +134,7 @@ class LogManagerItem {
 			}
 			return "\e[".$bashColor."m".$this->msg."\e[0m\n";
 		}else{
-			return '<p log-type="'.$this->type.'" >'.$this->msg.'</p>';
+			return '<div class="log-manager" log-type="'.$this->type.'" >'.$this->msg.'</div>';
 		}
 	}
 }

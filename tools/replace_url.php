@@ -15,6 +15,7 @@ $label = GETPOST('label', 'alpha');
 
 $oldUrl = GETPOST('old-url', 'alpha');
 $newUrl = GETPOST('new-url', 'alpha');
+$changeDomaineToo = GETPOST('change-domain-too', 'int');
 
 $error = 0;
 
@@ -28,6 +29,10 @@ $logManager = new devCommunityTools\LogManager();
 
 if($action = 'replaceUrl'){
 	__processUrlReplace($oldUrl, $newUrl, $logManager);
+
+	if(!empty($changeDomaineToo)){
+		__processUrlReplace($oldUrl, $newUrl, $logManager, true);
+	}
 }
 
 
@@ -65,9 +70,12 @@ print '<fieldset >';
 print '	<legend>'.$langs->trans('ReplaceUrlInTables').'</legend>';
 print '<input type="hidden" name="action" value="replaceUrl" />';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
-print '<input name="old-url" placeholder="'.$langs->trans('OldUrl').'" value="'.dol_escape_htmltag($oldUrl).'" >';
-print '<input name="new-url" placeholder="'.$langs->trans('NewUrl').'" value="'.dol_escape_htmltag($newUrl).'"  >';
+print '<input type="url" name="old-url" placeholder="'.$langs->trans('OldUrl').'" value="'.dol_escape_htmltag($oldUrl).'" required >';
+print '<input type="url" name="new-url" placeholder="'.$langs->trans('NewUrl').'" value="'.dol_escape_htmltag($newUrl).'" required >';
 print '<button type="submit">'.$langs->trans('Submit').'</button>';
+
+print '<br/><label><input type="checkbox" name="change-domain-too"  value="1" '.($changeDomaineToo?' checked ':'').' > '.$langs->trans('ChangeDomainToo').'</label>';
+
 
 print '</fieldset>';
 
@@ -93,7 +101,7 @@ require_once __DIR__.'/inc/__tools_footer.php';
  * @param devCommunityTools\LogManager $logManager
  * @return false|void
  */
-function __processUrlReplace($oldUrl, $newUrl, $logManager){
+function __processUrlReplace($oldUrl, $newUrl, $logManager, $replaceDomaineOnly = false){
 	global $db, $langs;
 
 	require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php';
@@ -108,6 +116,16 @@ function __processUrlReplace($oldUrl, $newUrl, $logManager){
 		$logManager->addError($validate->error);
 		return false;
 	}
+
+	if($replaceDomaineOnly){
+		$parseOldUrl = parse_url($oldUrl);
+		$parseNewUrl = parse_url($newUrl);
+		$oldUrl = $parseOldUrl['host'];
+		$newUrl = $parseNewUrl['host'];
+	}
+
+
+	$logManager->addLog($langs->trans('ReplaceUrlXByY', $oldUrl, $newUrl));
 
 	$tables = array(
 		'c_email_templates' => array( 'content'),
