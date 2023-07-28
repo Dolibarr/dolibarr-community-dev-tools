@@ -60,3 +60,15 @@ DevCommunityToolsPage = List of tools
 DevToolsNeedsDevEnvironmentToAllowUsage = Need to be in a development environment
 DevToolsNeedsDevEnvironmentToAllowUsageDesc = Dev tools are limited to admins users and conf.php need to have <strong><code>$dolibarr_main_prod = 0;</code></strong> to avoid usage in production.
 TitleMissing = Title missing
+GoToToolPage = Go tool page
+BackToToolsList = Back to tools list
+
+
+#
+# Tools - Url replace
+#
+UrlReplace = Replace Url
+UrlReplaceDesc = Will replace url in tables
+ReplaceUrlInTables = Replace URLs in tables
+OldUrl = Old url
+NewUrl = New url

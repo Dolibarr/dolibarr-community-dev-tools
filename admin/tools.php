@@ -117,39 +117,31 @@ print dol_get_fiche_head($head, 'tools', $langs->trans($page_name), -1, "devcomm
 
 
 
-if(!empty(checkDevToolsAccess(false))){
+if(!checkDevToolsAccess(false)){
 	print '<div class="error" ><h4>'.$langs->trans('DevToolsNeedsDevEnvironmentToAllowUsage').'</h4><p style="font-weight: normal;">'.$langs->transnoentities('DevToolsNeedsDevEnvironmentToAllowUsageDesc').'</p></div>';
 }else {
 
 	$toolList = array();
 
-	$toolList[] = array(
-		'title' => 'langsTrad',
-		'desc' => 'langsTradDesc',
-		'file' => 'devcommunitytools/tools/langs_trad.php',
-		'icon' => ''
-	);
+	// Exemple of page
+//	$toolList[] = array(
+//		'title' => 'YourPageName',
+//		'desc' => 'YourPageNameDesc',
+//		'file' => 'devcommunitytools/tools/default_tool_page.php', // A template for  new page
+//		'icon' => ''
+//	);
 
 	$toolList[] = array(
-		'title' => 'zlangsTrad',
-		'desc' => 'langsTradDesc',
-		'file' => 'devcommunitytools/tools/langs_trad.php',
-		'icon' => ''
+		'title'=> 'UrlReplace',
+		'desc' => 'UrlReplaceDesc',
+		'file' => 'devcommunitytools/tools/replace_url.php',
+		'icon' => 'fa-exchange-alt'
 	);
-
-
-	$toolList[] = array(
-		'title' => 'alangsTrad',
-		'desc' => 'langsTradDesc',
-		'file' => 'devcommunitytools/tools/langs_trad.php',
-		'icon' => ''
-	);
-
 
 	devToolsListSortByItemChildArrayKey($toolList,'title');
 
 
-	print '<div class="dev-tools-search-container"><input name="search_dev_tools" value="" id="search-dev-tools-form-input" class="dev-tools-search-input"   placeholder="'.$langs->trans('Search').'" autocomplete="off"></div>';
+	print '<div class="dev-tools-search-container"><input autofocus name="search_dev_tools" value="" id="search-dev-tools-form-input" class="dev-tools-search-input"   placeholder="'.$langs->trans('Search').'" autocomplete="off"></div>';
 
 
 	print '<div class="box-flex-container" >';
@@ -157,6 +149,7 @@ if(!empty(checkDevToolsAccess(false))){
 
 		$item = new stdClass();
 		$item->title = !empty($toolItem['title'])?$langs->trans($toolItem['title']):$langs->trans('TitleMissing');
+		$item->desc = !empty($toolItem['desc'])?$langs->trans($toolItem['desc']):'';
 		$item->icon  = !empty($toolItem['icon'])?$toolItem['icon']:'fa-tools';
 		$item->url   = !empty($toolItem['file'])?dol_buildpath($toolItem['file'], 1):'';
 
@@ -165,15 +158,13 @@ if(!empty(checkDevToolsAccess(false))){
 		print '	<div class="box-flex-item-with-margin">';
 		print '		<div class="info-box ">';
 		print '			<span class="info-box-icon bg-infobox-project">';
-		print '				<i class="fa fa-tools"></i>';
+		print '				<i class="fa '.$item->icon.'"></i>';
 		print '			</span>';
 		print '			<div class="info-box-content">';
 		print '				<div class="info-box-title" title="'.dol_escape_htmltag($item->title).'"><a href="'.$item->url.'" >'.$item->title.'</a></div>';
 		print '				<div class="info-box-lines">';
-
-		print '				<div class="info-box-line"><a href="'.$item->url.'" >'.$langs->trans('Use').'</a></div>';
-
-
+		print '					<div class="info-box-line">'.$item->desc.'</div>';
+		print '					<div class="info-box-line"><a href="'.$item->url.'" >'.$langs->trans('GoToToolPage').' <i class="fa fa-arrow-right"></i></a></div>';
 		print '				</div><!-- /.info-box-lines -->';
 		print '			</div><!-- /.info-box-content -->';
 		print '		</div>';
