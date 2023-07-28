@@ -18,16 +18,16 @@
 #
 
 # Module label 'ModuleDevCommunityToolsName'
-ModuleDevCommunityToolsName = DevCommunityTools
+ModuleDevCommunityToolsName = Dev Community Tools
 # Module description 'ModuleDevCommunityToolsDesc'
-ModuleDevCommunityToolsDesc = DevCommunityTools description
+ModuleDevCommunityToolsDesc = Collection of tools helpful for the developers of Doilibarr community
 
 #
 # Admin page
 #
-DevCommunityToolsSetup = DevCommunityTools setup
+DevCommunityToolsSetup = Dev Community Tools setup
 Settings = Settings
-DevCommunityToolsSetupPage = DevCommunityTools setup page
+DevCommunityToolsSetupPage = Dev Community Tools setup page
 DEVCOMMUNITYTOOLS_MYPARAM1 = My param 1
 DEVCOMMUNITYTOOLS_MYPARAM1Tooltip = My param 1 tooltip
 DEVCOMMUNITYTOOLS_MYPARAM2=My param 2
@@ -38,13 +38,13 @@ DEVCOMMUNITYTOOLS_MYPARAM2Tooltip=My param 2 tooltip
 # About page
 #
 About = About
-DevCommunityToolsAbout = About DevCommunityTools
-DevCommunityToolsAboutPage = DevCommunityTools about page
+DevCommunityToolsAbout = About Dev Community Tools
+DevCommunityToolsAboutPage = Dev Community Tools about page
 
 #
 # Sample page
 #
-DevCommunityToolsArea = Home DevCommunityTools
+DevCommunityToolsArea = Home Dev Community Tools
 MyPageName = My page name
 
 #
@@ -52,3 +52,11 @@ MyPageName = My page name
 #
 MyWidget = My widget
 MyWidgetDescription = My widget description
+
+#
+# Tools page
+#
+DevCommunityToolsPage = List of tools
+DevToolsNeedsDevEnvironmentToAllowUsage = Need to be in a development environment
+DevToolsNeedsDevEnvironmentToAllowUsageDesc = Dev tools are limited to admins users and conf.php need to have <strong><code>$dolibarr_main_prod = 0;</code></strong> to avoid usage in production.
+TitleMissing = Title missing

@@ -39,10 +39,15 @@ function devcommunitytoolsAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/devcommunitytools/admin/setup.php", 1);
-	$head[$h][1] = $langs->trans("Settings");
-	$head[$h][2] = 'settings';
+	$head[$h][0] = dol_buildpath("/devcommunitytools/admin/tools.php", 1);
+	$head[$h][1] = $langs->trans("Tools");
+	$head[$h][2] = 'tools';
 	$h++;
+
+//	$head[$h][0] = dol_buildpath("/devcommunitytools/admin/setup.php", 1);
+//	$head[$h][1] = $langs->trans("Settings");
+//	$head[$h][2] = 'settings';
+//	$h++;
 
 	/*
 	$head[$h][0] = dol_buildpath("/devcommunitytools/admin/myobject_extrafields.php", 1);
@@ -73,4 +78,38 @@ function devcommunitytoolsAdminPrepareHead()
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'devcommunitytools@devcommunitytools', 'remove');
 
 	return $head;
+}
+
+/**
+ * check if Dev tools can be used in this environement
+ *
+ * @param bool $callAccessForbiden if true will trigger an access forbiden en exit instead of returning ;
+ * @return bool
+ */
+function checkDevToolsAccess($callAccessForbiden = true){
+	global $dolibarr_main_prod, $user;
+
+	// Do not use dev tool in prod
+	$rights = empty($dolibarr_main_prod) && !empty($user->admin);
+	if($rights){
+		return true;
+	}
+
+	if($callAccessForbiden){
+		accessForbidden();
+	}
+
+	return false;
+}
+
+/**
+ * @param $array of items to sort
+ * @param $key key of item array to use
+ * @return bool
+ */
+function devToolsListSortByItemChildArrayKey(&$array, $key)
+{
+	return usort($array, function ($a, $b) use ($key) {
+		return strnatcmp($a[$key], $b[$key]);
+	});
 }
