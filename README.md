@@ -2,7 +2,8 @@
 
 ## Features
 
-Description of the module...
+This module is a collection of tools helpful for the developers of Doilibarr community.
+
 
 <!--
 ![Screenshot devcommunitytools](img/screenshot_devcommunitytools.png?raw=true "DevCommunityTools"){imgmd}
@@ -22,7 +23,7 @@ For more informations, see the [translator's documentation](https://wiki.dolibar
 There is a [Transifex project](https://transifex.com/projects/p/dolibarr-module-template) for this module.
 -->
 
-<!--
+
 
 ## Installation
 
@@ -62,7 +63,7 @@ Clone the repository in ```$dolibarr_main_document_root_alt/devcommunitytools```
 
 ```sh
 cd ....../custom
-git clone git@github.com:gitlogin/devcommunitytools.git devcommunitytools
+git clone git@github.com:Dolibarr/dolibarr-dev-community-tools.git devcommunitytools
 ```
 
 ### <a name="final_steps"></a>Final steps
@@ -73,7 +74,7 @@ From your browser:
   - Go to "Setup" -> "Modules"
   - You should now be able to find and enable the module
 
--->
+
 
 ## Licenses
 
