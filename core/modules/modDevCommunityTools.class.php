@@ -83,7 +83,7 @@ class modDevCommunityTools extends DolibarrModules
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		// To use a supported fa-xxx css style of font awesome, use this->picto='xxx'
-		$this->picto = 'fa-tools';
+		$this->picto = 'fa-tools_fa_#00384e';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
@@ -288,6 +288,31 @@ class modDevCommunityTools extends DolibarrModules
 		$r = 0;
 
 		// Add here entries to declare new menus
+
+		/**
+		 * MENU DEV TOOLS in Tools main menu
+		 */
+		$this->menu[$r++]=array(
+			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'=>'fk_mainmenu=tools',
+			// This is a Left menu entry
+			'type'=>'left',
+			'titre'=>'DevCommunityTools',
+			'mainmenu'=>'tools',
+			'leftmenu'=>'devcommunitytools',
+			'url'=>'/devcommunitytools/admin/tools.php?mainmenu=tools&leftmenu=devcommunitytools',
+			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'devcommunitytools@devcommunitytools',
+			'position'=>1100+$r,
+			// Define condition to show or hide menu entry. Use '$conf->devcommunitytools->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled'=>'$conf->devcommunitytools->enabled',
+			// Use 'perms'=>'$user->rights->devcommunitytools->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->admin',
+			'prefix' => '<span class="fa fa-tools  em092 pictofixedwidth" style="color: #00384e;"></span>',
+			'target'=>'',
+			// 0=Menu for internal users, 1=external users, 2=both
+			'user'=>0,
+		);
 
 
 	}

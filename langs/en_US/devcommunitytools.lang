@@ -21,6 +21,7 @@
 ModuleDevCommunityToolsName = Dev Community Tools
 # Module description 'ModuleDevCommunityToolsDesc'
 ModuleDevCommunityToolsDesc = Collection of tools helpful for the developers of Doilibarr community
+DevCommunityTools = Dev community tools
 
 #
 # Admin page
@@ -65,6 +66,13 @@ BackToToolsList = Back to tools list
 
 
 #
+# Tools - Translate Modules
+#
+TranslateModules = Translate modules
+TranslateModulesDesc = Create or update missing translations
+XExternalModulesFounds = %s externals modules found
+
+
 # Tools - Url replace
 #
 UrlReplace = Replace Url

@@ -130,6 +130,7 @@ function __processUrlReplace($oldUrl, $newUrl, $logManager, $replaceDomaineOnly 
 	$tables = array(
 		'c_email_templates' => array( 'content'),
 		'user' => array( 'signature'),
+		'mailing' => array( 'sujet', 'body')
 	);
 
 	foreach ($tables as $tableName => $cols){

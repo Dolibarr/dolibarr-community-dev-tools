@@ -21,4 +21,24 @@ $(function() {
 			$('.box-flex-container .box-flex-item').show();
 		}
 	});
+
+
+	$(".dev-tools-search-input[data-target]").on( "keyup", function() {
+		let search = $(this).val();
+		let target = $(this).attr('data-target');
+		if(target == undefined){
+			return;
+		}
+
+		if(search.length > 0){
+			$(target).hide();
+			$(target).each(function(){
+				if($(this).text().toUpperCase().indexOf(search.toUpperCase()) != -1){
+					$(this).show();
+				}
+			});
+		}else{
+			$(target).show();
+		}
+	});
 });

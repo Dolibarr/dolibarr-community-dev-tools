@@ -58,3 +58,15 @@
 	color: darkgreen;
 	font-weight: bold;
 }
+
+
+/**
+ * Translate tool
+ */
+
+.module-list-desc{
+	color: #666;
+	font-size: 0.8em;
+	padding-left: 2em;
+}
+
