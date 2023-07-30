@@ -102,6 +102,10 @@ if($module) {
 				$langsStats[$langKey][$fileName]->fileExist = false;
 				$langsStats[$langKey][$fileName]->missingTranslations = 0;
 				$langsStats[$langKey][$fileName]->additionalsTranslations = 0;
+
+				if(isset($moduleLangFileManager->translations[$currentLang][$fileName])){
+					$langsStats[$langKey][$fileName]->missingTranslations = count($moduleLangFileManager->translations[$currentLang][$fileName]);
+				}
 			}
 		}
 
@@ -114,6 +118,7 @@ if($module) {
 
 				foreach ($translationFiles as $translationFileName => $translations){
 					$langsStats[$langKey][$translationFileName]->fileExist = true;
+					$langsStats[$langKey][$translationFileName]->missingTranslations = 0;
 
 					// search missing translation based on comparaison language
 					foreach ($moduleLangFileManager->translations[$currentLang][$translationFileName] as $translationKey => $translationValue){
