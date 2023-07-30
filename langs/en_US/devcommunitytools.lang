@@ -74,7 +74,17 @@ XExternalModulesFounds = %s externals modules found
 ManageMissingTranslations = Manage missing translations
 CurrentLangIsX = Current language used for comparaison is <strong>%s</strong>
 PleaseSelectASourceLangWithTranslationBeforeStart = Please select a source lang with translation before start
+ModuleNotFoundCodeX = Module not found : error code %s
+ModuleXFoundButDoesNotMatchNameGivenY = Module %s found but doesn't match given name : %s.
+FileNotFound = File not found
+MissingTranslations = Missing translations
+AdditionalTranslations = Additional translations
+ClickToUseXAsBaseLanguageForComparaison = Click to use "%s" as language reference for compare
+ChangeReferenceLanguage = Change reference language
 
+
+
+#
 # Tools - Url replace
 #
 UrlReplace = Replace Url

@@ -70,3 +70,10 @@
 	padding-left: 2em;
 }
 
+.col-start-border{
+	border-left: 1px solid #e0e0e0;
+}
+
+.col-end-border:not(:last-of-type){
+	border-right: 1px solid #e0e0e0;
+}

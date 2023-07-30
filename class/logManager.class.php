@@ -19,6 +19,13 @@ class LogManager {
 	 */
 	public function addNewLogItem($msg, $type = 0){
 
+		if(is_array($msg)){
+			foreach ($msg as $txt){
+				$this->addNewLogItem($txt, $type);
+			}
+			return null;
+		}
+
 		$item = new LogManagerItem();
 		if($item->setLog($msg, $type)){
 			$this->logs[] = $item;

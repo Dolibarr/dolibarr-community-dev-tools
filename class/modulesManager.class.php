@@ -23,14 +23,15 @@ class ModulesManager {
 
 	/**
 	 * @param      $moduleName
+	 * @param bool $caseSensitive
 	 * @return false|\DolibarrModules
 	 */
-	public function fetch($moduleName){
+	public function fetch($moduleName, $caseSensitive = true){
 		global $langs;
 
 		$modulePath = dol_buildpath(strtolower($moduleName));
 		if(!$modulePath){
-			$this->setError($langs->trans('ModuleNotFound'));
+			$this->setError($langs->trans('ModuleNotFoundCodeX', 1).' : '.$modulePath);
 			return false;
 		}
 
@@ -38,7 +39,7 @@ class ModulesManager {
 		$this->fetchAll('all', $modulesDir);
 
 		if(empty($this->modules)){
-			$this->setError($langs->trans('ModuleNotFound'));
+			$this->setError($langs->trans('ModuleNotFoundCodeX', 2));
 			return false;
 		}
 
@@ -46,7 +47,19 @@ class ModulesManager {
 			return $this->modules['mod'.$moduleName];
 		}
 
-		$this->setError($langs->trans('ModuleNotFound'));
+		// check module exist but without case
+		foreach ($this->modules as $moduleK => $module){
+			if(strtolower($moduleK) == strtolower('mod'.$moduleName)){
+				if($caseSensitive){
+					$this->setError($langs->trans('ModuleXFoundButDoesNotMatchNameGivenY',$moduleK,  'mod'.$moduleName));
+					return false;
+				}else{
+					return $module;
+				}
+			}
+		}
+
+		$this->setError($langs->trans('ModuleNotFoundCodeX', 4));
 		return false;
 	}
 
@@ -63,7 +76,7 @@ class ModulesManager {
 	 * @param $modulesdir
 	 * @return void
 	 */
-	public function fetchAll($type = 'all', $modulesdir = array()){
+	public function fetchAll($type = 'all', $modulesdir = array(), $caseSensitive = true){
 
 		if(!$modulesdir){
 			// Search modules dirs
@@ -82,6 +95,9 @@ class ModulesManager {
 				while (($file = readdir($handle)) !== false) {
 					if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
 						$modName = substr($file, 0, dol_strlen($file) - 10);
+						if(!$caseSensitive){
+							$modName = strtolower($caseSensitive);
+						}
 						if ($modName) {
 
 							if (!empty($modNameLoaded[$modName])) {   // In cache of already loaded modules ?

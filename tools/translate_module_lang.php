@@ -22,7 +22,7 @@ $error = 0;
 
 $logManager = new devCommunityTools\LogManager();
 $modulesManager = new \devCommunityTools\ModulesManager($db);
-$module = $modulesManager->fetch($moduleName);
+$module = $modulesManager->fetch($moduleName, false);
 $logManager->addError($modulesManager->errors);
 
 /*
@@ -78,6 +78,9 @@ if($module) {
 
 	print  '<p>'.$langs->trans('CurrentLangIsX', $currentLang).'</p>';
 
+
+
+
 	$langsStats = array();
 	if(!empty($moduleLangFileManager->translations)){
 
@@ -88,6 +91,7 @@ if($module) {
 		}
 
 		$allTranslationsFiles = array_unique($allTranslationsFiles);
+		sort($allTranslationsFiles);
 
 		// prepare stats for langs files
 		foreach ($moduleLangFileManager->langsAvailables as $langKey => $langLabel ){
@@ -135,13 +139,106 @@ if($module) {
 					}
 				}
 			}
-
-			var_dump($langsStats);
 		}
 		else{
 			$logManager->addLog($langs->trans('PleaseSelectASourceLangWithTranslationBeforeStart'));
 		}
+	}
 
+
+	if($langsStats){
+		print '<div class="div-table-responsive" >';
+		print '<table class="noborder ">';
+		$i = 0;
+		foreach ($langsStats as $langKey => $langFileStats){
+
+			if($i == 0){
+
+				print '<thead>';
+				print '<tr class="liste_titre">';
+				print '		<th rowspan="2" >';
+				print '			<form action="'.$_SERVER['PHP_SELF'].'" type="get" >';
+				print '			<input type="hidden" name="module" value="'.dol_escape_htmltag($moduleName).'">';
+				print 			$form->selectArray('used-lang', $moduleLangFileManager->langsAvailables, $currentLang);
+				print '			<button type="submit" title="'.$langs->trans('ChangeReferenceLanguage').'"><i class="fa fa-repeat"></i></button>';
+				print '			</form >';
+				print '		</th>';
+				foreach ($allTranslationsFiles as $fileName){
+					print '		<th class="center col-start-border col-end-border" colspan="2">'.$fileName.'</th>';
+				}
+				print '</tr>';
+
+				print '<tr class="liste_titre">';
+				foreach ($allTranslationsFiles as $fileName){
+					print '		<th class="center col-start-border" >'.$langs->trans('MissingTranslations').'</th>';
+					print '		<th class="center col-end-border" >'.$langs->trans('AdditionalTranslations').'</th>';
+				}
+				print '</tr>';
+				print '</thead>';
+				print '<tbody>';
+			}
+
+			print '<tr class="oddeven" >';
+
+			// Lang and flag
+			print '		<td>';
+			$countryAssociated = isset($moduleLangFileManager->langsAvailables[$langKey])?$moduleLangFileManager->langsAvailables[$langKey]:$langKey;
+			$langCodeArr = explode('_', $langKey);
+			$countryCode = strtolower(end($langCodeArr));
+			$flag = $langKey;
+			if (file_exists(DOL_DOCUMENT_ROOT.'/theme/common/flags/'.$countryCode.'.png')) {
+				$flag = ' '.img_picto($countryCode, DOL_URL_ROOT.'/theme/common/flags/'.$countryCode.'.png', '', 1, 0, 1);
+			}
+			print '<span class="classfortooltip" title="'.dol_escape_htmltag($countryAssociated).'" >'.$flag.'</span> ';
+			print $countryAssociated;
+			print '		</td>';
+
+
+			// Langs files list
+			foreach ($allTranslationsFiles as $fileName){
+				if(!$langFileStats[$fileName]->fileExist){
+					print '<td colspan="2">'.dolGetBadge($langs->trans('FileNotFound'), '','danger').'</td>';
+				}else{
+					print '<td class="center col-start-border"  >';
+					if(empty($langFileStats[$fileName]->missingTranslations)){
+						print '<span class="fa fa-check" style="color: dimgrey"></span>';
+					}
+					else{
+						$params = array(
+							'attr' => array(
+								'class' => ' classfortooltip',
+								'title' => $langs->trans('MissingTranslations')
+							)
+						);
+						print dolGetBadge('-'.$langFileStats[$fileName]->missingTranslations, '', 'danger', '', '', $params);
+					}
+
+					print '</td>';
+
+					print '<td class="center col-end-border" >';
+					if(empty($langFileStats[$fileName]->additionalsTranslations)){
+						print '<span class="fa fa-check" style="color: dimgrey"></span>';
+					}
+					else {
+						$params = array(
+							'attr' => array(
+								'class' => ' classfortooltip',
+								'title' => $langs->trans('AdditionalTranslations')
+							)
+						);
+						print dolGetBadge('+' . $langFileStats[$fileName]->additionalsTranslations, '', 'primary', '', '', $params);
+					}
+					print '</td>';
+				}
+			}
+
+			print '</tr>';
+			$i++;
+		}
+
+		print '</tbody>';
+		print '</table>';
+		print '</div>';
 	}
 }
 

@@ -145,7 +145,8 @@ if($modulesManager->modules) {
 						$flag = ' '.img_picto($countryCode, DOL_URL_ROOT.'/theme/common/flags/'.$countryCode.'.png', '', 1, 0, 1);
 					}
 
-					print '<span class="classfortooltip" title="'.dol_escape_htmltag($countryAssociated).'" >'.$flag.'</span>';
+					$url = dol_buildpath('devcommunitytools/tools/translate_module_lang.php',1).'?module='.dol_escape_htmltag($moduletechnicalname).'&used-lang='.$langCode;
+					print '<a href="'.$url.'" class="classfortooltip" title="'.dol_escape_htmltag($langs->trans("ClickToUseXAsBaseLanguageForComparaison",$countryAssociated)).'" >'.$flag.'</span>';
 				}
 			}
 		}
