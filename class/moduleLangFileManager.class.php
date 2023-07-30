@@ -44,6 +44,7 @@ class ModuleLangFileManager{
 		}
 	}
 
+
 	/**
 	 * @return false|void
 	 */

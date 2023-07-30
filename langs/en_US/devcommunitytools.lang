@@ -72,6 +72,8 @@ TranslateModules = Translate modules
 TranslateModulesDesc = Create or update missing translations
 XExternalModulesFounds = %s externals modules found
 ManageMissingTranslations = Manage missing translations
+CurrentLangIsX = Current language used for comparaison is <strong>%s</strong>
+PleaseSelectASourceLangWithTranslationBeforeStart = Please select a source lang with translation before start
 
 # Tools - Url replace
 #

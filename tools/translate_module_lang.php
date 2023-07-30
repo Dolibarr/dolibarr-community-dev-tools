@@ -13,7 +13,10 @@ $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $moduleName = GETPOST('module', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
-
+$currentLang = GETPOST('used-lang', 'aZ09');
+if(empty($currentLang)){
+	$currentLang =  $langs->defaultlang;
+}
 
 $error = 0;
 
@@ -66,17 +69,75 @@ if($module) {
 
 	$moduleLangFileManager = new \devCommunityTools\ModuleLangFileManager($module, $langs);
 	$moduleLangFileManager->loadTranslations();
+	if(!isset($moduleLangFileManager->langsAvailables[$currentLang])){
+		$currentLang = $langs->defaultlang;
+		if(!isset($moduleLangFileManager->langsAvailables[$langs->defaultlang])){
+			$currentLang = array_key_first($moduleLangFileManager->langsAvailables);
+		}
+	}
 
+	print  '<p>'.$langs->trans('CurrentLangIsX', $currentLang).'</p>';
 
-	var_dump($moduleLangFileManager->translations);
+	$langsStats = array();
+	if(!empty($moduleLangFileManager->translations)){
 
-		// Load all language files of the qualified module
-		if (isset($module->langfiles) && is_array($module->langfiles)) {
-			foreach ($module->langfiles as $domain) {
-				$langs->load($domain);
+		$allTranslationsFiles = array();
+		// Make a list of files available
+		foreach ($moduleLangFileManager->translations as $langKey => $translationFiles) {
+			$allTranslationsFiles+=array_keys($translationFiles);
+		}
+
+		$allTranslationsFiles = array_unique($allTranslationsFiles);
+
+		// prepare stats for langs files
+		foreach ($moduleLangFileManager->langsAvailables as $langKey => $langLabel ){
+
+			if($langKey == $currentLang){
+				continue;
+			}
+
+			$langsStats[$langKey] = array();
+			foreach ($allTranslationsFiles as $fileName){
+				$langsStats[$langKey][$fileName] = new stdClass();
+				$langsStats[$langKey][$fileName]->fileExist = false;
+				$langsStats[$langKey][$fileName]->missingTranslations = 0;
+				$langsStats[$langKey][$fileName]->additionalsTranslations = 0;
 			}
 		}
 
+		if(!empty($moduleLangFileManager->translations[$currentLang])){
+
+			foreach ($moduleLangFileManager->translations as $langKey => $translationFiles){
+				if($langKey == $currentLang){
+					continue;
+				}
+
+				foreach ($translationFiles as $translationFileName => $translations){
+					$langsStats[$langKey][$translationFileName]->fileExist = true;
+
+					// search missing translation based on comparaison language
+					foreach ($moduleLangFileManager->translations[$currentLang][$translationFileName] as $translationKey => $translationValue){
+						if(!isset($moduleLangFileManager->translations[$langKey][$translationFileName][$translationKey])){
+							$langsStats[$langKey][$translationFileName]->missingTranslations++;
+						}
+					}
+
+					// compare  lang file with lang used for comparaison
+					foreach ($translations as $translationKey => $translationValue){
+						if(!isset($moduleLangFileManager->translations[$currentLang][$translationFileName][$translationKey])){
+							$langsStats[$langKey][$translationFileName]->additionalsTranslations++;
+						}
+					}
+				}
+			}
+
+			var_dump($langsStats);
+		}
+		else{
+			$logManager->addLog($langs->trans('PleaseSelectASourceLangWithTranslationBeforeStart'));
+		}
+
+	}
 }
 
 $logManager->output(true,true);
