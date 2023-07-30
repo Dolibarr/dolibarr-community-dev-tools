@@ -55,7 +55,7 @@ class LogManager {
 	/**
 	 * @return bool
 	 */
-	public function output($print = false){
+	public function output($print = false, $clear = false){
 		$out = '';
 		foreach($this->logs as $item){
 			$itemOut = $item->output();
@@ -65,6 +65,11 @@ class LogManager {
 				$out.= $itemOut;
 			}
 		}
+		if($clear){$this->clear();}
 		return $out;
+	}
+
+	public function clear(){
+		$this->logs = array();
 	}
 }

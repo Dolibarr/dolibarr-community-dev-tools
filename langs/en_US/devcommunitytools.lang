@@ -71,7 +71,7 @@ BackToToolsList = Back to tools list
 TranslateModules = Translate modules
 TranslateModulesDesc = Create or update missing translations
 XExternalModulesFounds = %s externals modules found
-
+ManageMissingTranslations = Manage missing translations
 
 # Tools - Url replace
 #

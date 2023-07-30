@@ -11,7 +11,7 @@ class ModulesManager {
 
 
 	/**
-	 * @var DolibarrModules[]
+	 * @var \DolibarrModules[]
 	 */
 	public $modules = array();
 
@@ -21,21 +21,69 @@ class ModulesManager {
 		$this->db = $db;
 	}
 
+	/**
+	 * @param      $moduleName
+	 * @return false|\DolibarrModules
+	 */
+	public function fetch($moduleName){
+		global $langs;
 
-	public function fetchAll($type = 'all'){
+		$modulePath = dol_buildpath(strtolower($moduleName));
+		if(!$modulePath){
+			$this->setError($langs->trans('ModuleNotFound'));
+			return false;
+		}
 
-// Search modules dirs
-		$modulesdir = dolGetModulesDirs();
+		$modulesDir = array($modulePath.'/core/modules/');
+		$this->fetchAll('all', $modulesDir);
+
+		if(empty($this->modules)){
+			$this->setError($langs->trans('ModuleNotFound'));
+			return false;
+		}
+
+		if(isset($this->modules['mod'.$moduleName])){
+			return $this->modules['mod'.$moduleName];
+		}
+
+		$this->setError($langs->trans('ModuleNotFound'));
+		return false;
+	}
+
+	/**
+	 * @param \DolibarrModules $module
+	 * @return false|string
+	 */
+	public static function getModulePath($module){
+		return dol_buildpath(strtolower($module->name));
+	}
+
+	/**
+	 * @param $type 'all' 'internal' external'
+	 * @param $modulesdir
+	 * @return void
+	 */
+	public function fetchAll($type = 'all', $modulesdir = array()){
+
+		if(!$modulesdir){
+			// Search modules dirs
+			$modulesdir = dolGetModulesDirs();
+		}
+
+		if(!is_array($modulesdir) || empty($modulesdir)){
+			$this->setError("Invalid module dir value");
+			return;
+		}
 
 		foreach ($modulesdir as $dir) {
 			// Load modules attributes in arrays (name, numero, orders) from dir directory
 			$handle = @opendir($dir);
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
-					//print "$i ".$file."\n<br>";
 					if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
 						$modName = substr($file, 0, dol_strlen($file) - 10);
 						if ($modName) {
+
 							if (!empty($modNameLoaded[$modName])) {   // In cache of already loaded modules ?
 								$this->setError("Error: Module ".$modName." was found twice: Into ".$modNameLoaded[$modName]." and ".$dir.". You probably have an old file on your disk.");
 								continue;

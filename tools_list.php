@@ -141,7 +141,7 @@ if(!checkDevToolsAccess(false)){
 	$toolList[] = array(
 		'title'=> 'TranslateModules',
 		'desc' => 'TranslateModulesDesc',
-		'file' => 'devcommunitytools/tools/translate_modules.php',
+		'file' => 'devcommunitytools/tools/translate_modules_list.php',
 		'icon' => 'fa fa-flag'
 	);
 

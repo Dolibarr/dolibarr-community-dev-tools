@@ -87,7 +87,7 @@ if($modulesManager->modules) {
 		$moduledesclong = $objMod->getDescLong();
 		$moduleauthor = $objMod->getPublisher();
 		$status = !empty($conf->global->$const_name);
-		$modulePath = dol_buildpath(strtolower($objMod->name));
+		$modulePath = dol_buildpath(strtolower($moduletechnicalname));
 
 
 		// Load all language files of the qualified module
@@ -102,7 +102,7 @@ if($modulesManager->modules) {
 
 
 		// Picto + Name of module
-		print '  <td class="tdoverflowmax300" title="' . dol_escape_htmltag($objMod->getName()) . '">';
+		print '  <td class="" title="' . dol_escape_htmltag($objMod->getName()) . '">';
 
 		print '<div class="module-list-name tdoverflowmax300">';
 		$alttext = '';
@@ -127,7 +127,7 @@ if($modulesManager->modules) {
 		print "</td>\n";
 
 		// Langs
-		print '<td class="valignmiddle">';
+		print '<td class="valignmiddle nowraponall">';
 
 		$useLang = file_exists($modulePath."/langs");
 		if($useLang){
@@ -155,6 +155,10 @@ if($modulesManager->modules) {
 
 		print "</td>\n";
 
+		// Langs
+		print '<td class="valignmiddle nowraponall">';
+		print '<a href="'.dol_buildpath('devcommunitytools/tools/translate_module_lang.php',1).'?module='.dol_escape_htmltag($moduletechnicalname).'" >'.$langs->trans('ManageMissingTranslations').'</a>';
+		print "</td>\n";
 
 		print "</tr>\n";
 
@@ -177,63 +181,3 @@ print dol_get_fiche_end();
 
 
 require_once __DIR__.'/inc/__tools_footer.php';
-
-/**
- * @param string $oldUrl
- * @param string $newUrl
- * @param devCommunityTools\LogManager $logManager
- * @return false|void
- */
-function __processUrlReplace($oldUrl, $newUrl, $logManager, $replaceDomaineOnly = false){
-	global $db, $langs;
-
-	require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php';
-	$validate = new Validate($db, $langs);
-
-	if (empty($oldUrl) || !$validate->isUrl($oldUrl)){
-		$logManager->addError($validate->error);
-		return false;
-	}
-
-	if (empty($newUrl) || !$validate->isUrl($newUrl)){
-		$logManager->addError($validate->error);
-		return false;
-	}
-
-	if($replaceDomaineOnly){
-		$parseOldUrl = parse_url($oldUrl);
-		$parseNewUrl = parse_url($newUrl);
-		$oldUrl = $parseOldUrl['host'];
-		$newUrl = $parseNewUrl['host'];
-	}
-
-
-	$logManager->addLog($langs->trans('ReplaceUrlXByY', $oldUrl, $newUrl));
-
-	$tables = array(
-		'c_email_templates' => array( 'content'),
-		'user' => array( 'signature'),
-		'mailing' => array( 'sujet', 'body')
-	);
-
-	foreach ($tables as $tableName => $cols){
-		$tableName = MAIN_DB_PREFIX.$tableName;
-		$sqlShowTable = "SHOW TABLES LIKE '".$db->escape($tableName)."' ";
-		$resST = $db->query($sqlShowTable);
-		if($resST && $db->num_rows($resST) > 0) {
-			foreach ($cols as $col){
-				$sql = "UPDATE `".$db->escape($tableName)."` SET `".$db->escape($col)."` = REPLACE(`".$db->escape($col)."`,'".$db->escape($oldUrl)."' ,'".$db->escape($newUrl)."');";
-				$resCol = $db->query($sql);
-				if(!$sql){
-					$logManager->addError($tableName. " :  ".$col." UPDATE ERROR ".$db->error());
-				}else{
-					$num = $db->affected_rows($resCol);
-					$logManager->addSuccess($tableName. " :  ".$col." => ".$num);
-				}
-			}
-		}
-		else{
-			$logManager->addError("Error : " .$sqlShowTable. " ". $db->error());
-		}
-	}
-}
