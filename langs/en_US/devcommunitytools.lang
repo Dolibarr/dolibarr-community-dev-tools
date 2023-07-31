@@ -22,6 +22,7 @@ ModuleDevCommunityToolsName = Dev Community Tools
 # Module description 'ModuleDevCommunityToolsDesc'
 ModuleDevCommunityToolsDesc = Collection of tools helpful for the developers of Doilibarr community
 DevCommunityTools = Dev community tools
+WarningMaxInputVarsIsBelowNumberOfInputs = WARNING : php ini max input vars (%s) is below number of needed input (%s)
 
 #
 # Admin page
@@ -81,7 +82,7 @@ MissingTranslations = Missing translations
 AdditionalTranslations = Additional translations
 ClickToUseXAsBaseLanguageForComparaison = Click to use "%s" as language reference for compare
 ChangeReferenceLanguage = Change reference language
-
+AddMissingTranslationOfXFileFromYLangToZLang = Add missing translations of %s from %s to %s
 
 
 #

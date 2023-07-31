@@ -123,7 +123,7 @@ class ModuleLangFileManager{
 		if ($fp = @fopen($filename,"rt")) {
 			while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n]")) {
 				if (isset($line[1])) {
-					list($key, $value) = $line;
+					[$key, $value] = $line;
 					//if ($domain == 'orders') print "Domain=$domain, found a string for $tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
 					//if ($key == 'Order') print "Domain=$domain, found a string for key=$key=$tab[0] with value $tab[1]. Currently in cache ".$this->tab_translate[$key]."<br>";
 					if (empty($tab_translate[$key])) { // If translation was already found, we must not continue, even if MAIN_FORCELANGDIR is set (MAIN_FORCELANGDIR is to replace lang dir, not to overwrite entries)
@@ -145,4 +145,20 @@ class ModuleLangFileManager{
 		return $tab_translate;
 	}
 
+
+	/**
+	 * @param $langCode
+	 * @return mixed|string
+	 */
+	public static function getFlag($langCode, $codeIfNoImage = true){
+		$langCodeArr = explode('_', $langCode);
+		$countryCode = strtolower(end($langCodeArr));
+
+		$flag = $codeIfNoImage?$langCode:'';
+		if (file_exists(DOL_DOCUMENT_ROOT.'/theme/common/flags/'.$countryCode.'.png')) {
+			$flag = img_picto($countryCode, DOL_URL_ROOT.'/theme/common/flags/'.$countryCode.'.png', '', 1, 0, 1);
+		}
+
+		return $flag;
+	}
 }

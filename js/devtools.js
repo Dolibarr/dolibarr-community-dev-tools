@@ -41,4 +41,22 @@ $(function() {
 			$(target).show();
 		}
 	});
+
+
+
+	/**
+	 * Ajoute un auto sizer pour les textarea est permettre de tapper plus facilement le text
+	 * @param {HTMLElement} textAreaItem
+	 */
+	let autoSizedTextArea = document.querySelectorAll('textarea[autoresize="1"]');
+	if(autoSizedTextArea.length > 0){
+		autoSizedTextArea.forEach(function (textAreaItem) {
+			textAreaItem.setAttribute("style", "height:" + (textAreaItem.scrollHeight) + "px;overflow-y:hidden;");
+			textAreaItem.addEventListener("input", function(){
+				this.style.height = 0;
+				this.style.height = (this.scrollHeight) + "px";
+			}, false);
+		});
+	}
+
 });

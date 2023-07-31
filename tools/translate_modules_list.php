@@ -1,6 +1,7 @@
 <?php require_once __DIR__ . '/inc/__tools_header.php';
 
 require_once __DIR__ . '/../class/modulesManager.class.php';
+require_once __DIR__ . '/../class/moduleLangFileManager.class.php';
 
 $devToolScriptName =  'TranslateModules';
 
@@ -24,9 +25,9 @@ $error = 0;
 
 $logManager = new devCommunityTools\LogManager();
 
-if($action = ''){
-
-}
+//if($action == ''){
+//
+//}
 
 
 /*
@@ -136,17 +137,9 @@ if($modulesManager->modules) {
 			if($langsAvailables){
 
 				foreach ($langsAvailables as $langCode => $countryAssociated){
-
-					$langCodeArr = explode('_', $langCode);
-					$countryCode = strtolower(end($langCodeArr));
-
-					$flag = $langCode;
-					if (file_exists(DOL_DOCUMENT_ROOT.'/theme/common/flags/'.$countryCode.'.png')) {
-						$flag = ' '.img_picto($countryCode, DOL_URL_ROOT.'/theme/common/flags/'.$countryCode.'.png', '', 1, 0, 1);
-					}
-
+					$flag = \devCommunityTools\ModuleLangFileManager::getFlag($langCode);
 					$url = dol_buildpath('devcommunitytools/tools/translate_module_lang.php',1).'?module='.dol_escape_htmltag($moduletechnicalname).'&used-lang='.$langCode;
-					print '<a href="'.$url.'" class="classfortooltip" title="'.dol_escape_htmltag($langs->trans("ClickToUseXAsBaseLanguageForComparaison",$countryAssociated)).'" >'.$flag.'</span>';
+					print '<a href="'.$url.'" class="classfortooltip" title="'.dol_escape_htmltag($langs->trans("ClickToUseXAsBaseLanguageForComparaison",$countryAssociated)).'" >'.$flag.'</span> ';
 				}
 			}
 		}
