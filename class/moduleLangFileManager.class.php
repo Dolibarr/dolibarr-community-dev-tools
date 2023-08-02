@@ -191,8 +191,10 @@ class ModuleLangFileManager{
 	 * @return mixed|string
 	 */
 	public static function getFlag($langCode, $codeIfNoImage = true){
-		$langCodeArr = explode('_', $langCode);
-		$countryCode = strtolower(end($langCodeArr));
+		$countryCode = static::getCountryCode($langCode);
+		if(!$countryCode){
+			return $langCode;
+		}
 
 		$flag = $codeIfNoImage?$langCode:'';
 		if (file_exists(DOL_DOCUMENT_ROOT.'/theme/common/flags/'.$countryCode.'.png')) {
@@ -201,4 +203,18 @@ class ModuleLangFileManager{
 
 		return $flag;
 	}
+
+	/**
+	 * @param $langCode
+	 * @return mixed|string
+	 */
+	public static function getCountryCode($langCode){
+		if(!static::isLangCodeName($langCode)){
+			return false;
+		}
+
+		$langCodeArr = explode('_', $langCode);
+		return strtolower(end($langCodeArr));
+	}
+
 }

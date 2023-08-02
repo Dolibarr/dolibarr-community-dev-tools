@@ -84,16 +84,21 @@ if($module) {
 					$langsStats[$langKey][$translationFileName]->missingTranslations = 0;
 
 					// search missing translation based on comparaison language
-					foreach ($moduleLangFileManager->translations[$currentLang][$translationFileName] as $translationKey => $translationValue){
-						if(!isset($moduleLangFileManager->translations[$langKey][$translationFileName][$translationKey])){
-							$langsStats[$langKey][$translationFileName]->missingTranslations++;
+					if(!empty($moduleLangFileManager->translations[$currentLang][$translationFileName])){
+						foreach ($moduleLangFileManager->translations[$currentLang][$translationFileName] as $translationKey => $translationValue){
+							if(!isset($moduleLangFileManager->translations[$langKey][$translationFileName][$translationKey])){
+								$langsStats[$langKey][$translationFileName]->missingTranslations++;
+							}
 						}
 					}
 
+
 					// compare  lang file with lang used for comparaison
-					foreach ($translations as $translationKey => $translationValue){
-						if(!isset($moduleLangFileManager->translations[$currentLang][$translationFileName][$translationKey])){
-							$langsStats[$langKey][$translationFileName]->additionalsTranslations++;
+					if(!empty($translations)) {
+						foreach($translations as $translationKey => $translationValue) {
+							if(! isset($moduleLangFileManager->translations[$currentLang][$translationFileName][$translationKey])) {
+								$langsStats[$langKey][$translationFileName]->additionalsTranslations++;
+							}
 						}
 					}
 				}
@@ -124,7 +129,8 @@ if($action == 'send-missing-translations'){
 $help_url = '';
 $page_name = $langs->trans("DevCommunityTools").' - '.$langs->trans($devToolScriptName);
 $arrayofjs = array(
-	'devcommunitytools/js/devtools.js'
+	'devcommunitytools/js/devtools.js',
+	'devcommunitytools/js/deepl.class.js'
 );
 
 $arrayofcss = array(
@@ -169,7 +175,7 @@ print dol_get_fiche_end();
 require_once __DIR__.'/inc/__tools_footer.php';
 
 function __display_add_missing_tranlations_form(){
-	global $currentLang, $moduleLangFileManager, $langs, $moduleName;
+	global $currentLang, $moduleLangFileManager, $langs, $moduleName, $deeplAPIKey, $deeplAPIKeyIsPro;
 
 	$targetLang = GETPOST('target-lang', 'aZ09');
 	$fileName = GETPOST('file-name', 'aZ09');
@@ -224,16 +230,25 @@ function __display_add_missing_tranlations_form(){
 	print '<table class="noborder " >';
 	foreach($newTrads as $tradKey => $newTrad){
 
-
+		$tradKeyEspaced = dol_escape_htmltag($tradKey);
 		print '<tr class="oddeven">';
-		print '	<td>';
-		print '	<td>';
-		print '		<label class="dev-tool-lang-label" for="source_trad_'.$tradKey.'" >'.$sourceFlag.' '.$tradKey.'</label>';
-		print '		<textarea class="dev-tool-lang-textarea" autoresize="1" disabled id="source_trad_'.$tradKey.'" name="source_trad['.$tradKey.']" >'.htmlentities($moduleLangFileManager->translations[$currentLang][$fileName][$tradKey]).'</textarea>';
+		print '	<td style="width: 50%;">';
+		print '		<label class="dev-tool-lang-label" for="source_trad_'.$tradKeyEspaced.'" >'.$sourceFlag.' '.$tradKey.'</label>';
+		print '		<textarea class="dev-tool-lang-textarea" autoresize="1" disabled id="source_trad_'.$tradKeyEspaced.'" name="source_trad['.$tradKeyEspaced.']" >'.htmlentities($moduleLangFileManager->translations[$currentLang][$fileName][$tradKey]).'</textarea>';
 		print '	</td>';
-		print '	<td>';
-		print '		<label class="dev-tool-lang-label" for="trad_'.$tradKey.'" >'.$targetFlag.' '.$tradKey.'</label>';
-		print '		<textarea class="dev-tool-lang-textarea" autoresize="1" disablenewline="1" id="trad_'.$tradKey.'" name="trad['.$tradKey.']" >'.htmlentities($newTrad).'</textarea>';
+
+		print '	<td style="width: 50%;">';
+		print '		<label class="dev-tool-lang-label" for="trad_'.$tradKeyEspaced.'" >'.$targetFlag.' '.$tradKey.'</label>';
+
+		if(!empty($deeplAPIKey)){
+			print ' <button href="" class="generate-translation-btn" '
+				.' data-language-code-src="'.strtoupper(\devCommunityTools\ModuleLangFileManager::getCountryCode($currentLang)).'" '
+				.' data-language-code-dest="'.strtoupper(\devCommunityTools\ModuleLangFileManager::getCountryCode($targetLang)).'" '
+				.' data-trad-key="'.$tradKeyEspaced.'" '
+				.' ><span style="font-size: 0.8em;" class="fa fa-refresh"></span> '.$langs->trans('GenerateTranslation').'</button>';
+		}
+
+		print '		<textarea class="dev-tool-lang-textarea" autoresize="1" disablenewline="1" id="trad_'.$tradKeyEspaced.'" name="trad['.$tradKeyEspaced.']" >'.htmlentities($newTrad).'</textarea>';
 		print '	</td>';
 		print '</tr>';
 	}
@@ -243,6 +258,44 @@ function __display_add_missing_tranlations_form(){
 	print '<button type="submit" class="button" >'.$langs->trans('Submit').'</button>';
 
 	print '</fieldset>';
+
+	// Conf stored in conf.php (
+	$jsConf = array(
+		'deeplAPIKey' => !empty($deeplAPIKey)?$deeplAPIKey:'',
+		'deeplAPIKeyIsPro' => !empty($deeplAPIKeyIsPro)
+	);
+
+	if(!empty($deeplAPIKey)){
+	?>
+	<script>
+		$(function() {
+			let translateConf = <?php print json_encode($jsConf); ?>;
+			let deepL = new DeepLApi({
+				APIUsePro: translateConf.deeplAPIKeyIsPro,
+				APIKey: translateConf.deeplAPIKey
+			})
+
+
+			$(".generate-translation-btn").on( "click", function(e) {
+				e.preventDefault();
+				let langSrc = $(this).attr('data-language-code-src');
+				let langDest = $(this).attr('data-language-code-dest');
+				let langKey = $(this).attr('data-trad-key');
+				let sourceTxt = $('.dev-tool-lang-textarea[name="source_trad['+langKey+']"]').first().val();
+				if(sourceTxt.length > 0){
+					deepL.getTranslations(sourceTxt, langDest, langSrc,  function(result){
+						console.log(result);
+						if(result.length>0 &&  result.translations.length>0){
+							$('.dev-tool-lang-textarea[name="trad['+langKey+']"]').val(result.translations[0].text)
+						}
+					});
+				}
+			});
+
+		});
+	</script>
+	<?php
+	}
 }
 
 /**

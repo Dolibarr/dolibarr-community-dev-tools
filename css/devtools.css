@@ -79,11 +79,23 @@
 }
 
 .dev-tool-lang-label{
-    display: block;
+    display: inline-block;
     font-weight: bold;
     color: dimgrey;
 }
 
 .dev-tool-lang-textarea{
-    width: calc(100% - 32px);
+    display: block;
+    clear: both;
+    width: calc(100% - 10px);
+}
+
+.generate-translation-btn{
+    display: inline-block;
+    float: right;
+    opacity: 0;
+}
+
+tr:hover .generate-translation-btn{
+    opacity: 1;
 }
