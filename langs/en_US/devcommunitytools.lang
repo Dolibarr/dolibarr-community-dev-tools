@@ -83,7 +83,9 @@ AdditionalTranslations = Additional translations
 ClickToUseXAsBaseLanguageForComparaison = Click to use "%s" as language reference for compare
 ChangeReferenceLanguage = Change reference language
 AddMissingTranslationOfXFileFromYLangToZLang = Add missing translations of %s from %s to %s
-
+UpdatedXmissingTranslations = $s translations updated
+NoTradToProcess = No translation to process
+ErrorFileIsNotWritable = File <code>%s</code> isn't writable
 
 #
 # Tools - Url replace

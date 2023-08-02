@@ -93,7 +93,7 @@ class ModuleLangFileManager{
 					}
 
 					// check is a lang file
-					if (preg_match('/^[a-zA-Z0-9]+(\.lang)$/', $filename)) {
+					if (static::isLangFileName($filename)) {
 						// Load "from" translations
 						$path_parts = pathinfo($langDir . '/' . $filename);
 						$this->translations[$langKey][$path_parts['filename']] = static::loadFileTranslation($langDir . '/' . $filename);
@@ -103,6 +103,46 @@ class ModuleLangFileManager{
 		}
 	}
 
+	/**
+	 * @param string $langKey
+	 * @param string $langFileName
+	 * @param bool $onExistOnly
+	 * @return false|string
+	 */
+	public function getLangFilePath($langKey, $langFileName, $onExistOnly = false){
+		if(!static::isLangCodeName($langKey)){
+			$this->setError('Invalid lang code');
+			return false;
+		}
+
+		if(!static::isLangFileName($langFileName.'.lang')){
+			$this->setError('Invalid lang fine name');
+			return false;
+		}
+
+		$langFilePath = $this->langDir . '/' . $langKey . '/' . $langFileName . '.lang';
+		if($onExistOnly && !file_exists($langFilePath)) {
+			return false;
+		}
+
+		return $langFilePath;
+	}
+
+	/**
+	 * @param $string
+	 * @return false|int
+	 */
+	public static function isLangCodeName($string){
+		return preg_match('/^[a-z]{1,2}_[A-Z]{1,2}$/', $string);
+	}
+
+	/**
+	 * @param $filename
+	 * @return false|int
+	 */
+	public static function isLangFileName($filename){
+		return preg_match('/^[a-zA-Z0-9]+(\.lang)$/', $filename);
+	}
 
 	/**
 	 * @param $filename

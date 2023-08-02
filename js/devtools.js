@@ -45,7 +45,7 @@ $(function() {
 
 
 	/**
-	 * Ajoute un auto sizer pour les textarea est permettre de tapper plus facilement le text
+	 * Adds an auto sizer for textarea to make text typing easier
 	 * @param {HTMLElement} textAreaItem
 	 */
 	let autoSizedTextArea = document.querySelectorAll('textarea[autoresize="1"]');
@@ -59,4 +59,15 @@ $(function() {
 		});
 	}
 
+	/**
+	 * Allow disabling Enter key on textarea who need it.
+	 */
+	$('textarea[disablenewline="1"]').on( 'keypress', function(event) {
+		if (event.key === 'Enter')
+		{
+			//method to prevent from default behaviour
+			event.preventDefault();
+			return false;
+		}
+	});
 });

@@ -110,8 +110,9 @@ if($module) {
  * Actions
  */
 
-if($action == ''){
-
+if($action == 'send-missing-translations'){
+	__action_add_missing_tranlations();
+	$action = 'add-missing-translations';
 }
 
 /*
@@ -168,10 +169,11 @@ print dol_get_fiche_end();
 require_once __DIR__.'/inc/__tools_footer.php';
 
 function __display_add_missing_tranlations_form(){
-	global $currentLang, $form, $module, $moduleLangFileManager, $langs, $moduleName,$langsStats,$allTranslationsFiles;
+	global $currentLang, $moduleLangFileManager, $langs, $moduleName;
 
 	$targetLang = GETPOST('target-lang', 'aZ09');
 	$fileName = GETPOST('file-name', 'aZ09');
+	$postedLang = GETPOST('trad','array:restricthtml');
 
 
 	if(empty($moduleLangFileManager->translations[$targetLang][$fileName]) || !isset($moduleLangFileManager->translations[$currentLang][$fileName]) ){
@@ -182,13 +184,17 @@ function __display_add_missing_tranlations_form(){
 	print '<fieldset>';
 	print '<legend>'.$langs->transnoentities('AddMissingTranslationOfXFileFromYLangToZLang', '<b>'.$fileName.'.lang</b>', '<b>'.$currentLang.'</b>', '<b>'.$targetLang.'</b>').'</legend>';
 
-	$postedLang = getPost('trad', 'array');
+	$langTargetFilePath =  $moduleLangFileManager->getLangFilePath($targetLang, $fileName);
+	if($langTargetFilePath && !is_writable($langTargetFilePath)) {
+		print '<div class="warning" >'.$langs->transnoentities('ErrorFileIsNotWritable',$langTargetFilePath).'</div>';
+	}
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" type="post" >';
 	$numInput = 0;
 	print '	<input type="hidden" name="module" value="'.dol_escape_htmltag($moduleName).'">';$numInput++;
 	print '	<input type="hidden" name="target-lang" value="'.dol_escape_htmltag($targetLang).'">';$numInput++;
-	print '	<input type="hidden" name="action" value="add-missing-translations">';$numInput++;
+	print '	<input type="hidden" name="token" value="'.newToken().'">';$numInput++;
+	print '	<input type="hidden" name="action" value="send-missing-translations">';$numInput++;
 	print '	<input type="hidden" name="file-name" value="'.dol_escape_htmltag($fileName).'">';$numInput++;
 	print '	<input type="hidden" name="used-lang" value="'.dol_escape_htmltag($currentLang).'">';$numInput++;
 
@@ -196,8 +202,8 @@ function __display_add_missing_tranlations_form(){
 
 	$newTrads = array();
 	foreach($moduleLangFileManager->translations[$currentLang][$fileName] as $tradKey => $trad){
-		if(isset($moduleLangFileManager->translations[$targetLang][$fileName][$tradKey]) && empty($postedLang[$tradKey])){
-			// do not display input trad if already present in target but not if is in current posted values
+		if(isset($moduleLangFileManager->translations[$targetLang][$fileName][$tradKey])){
+			// do not display input trad if already present in target
 			continue;
 		}
 
@@ -227,7 +233,7 @@ function __display_add_missing_tranlations_form(){
 		print '	</td>';
 		print '	<td>';
 		print '		<label class="dev-tool-lang-label" for="trad_'.$tradKey.'" >'.$targetFlag.' '.$tradKey.'</label>';
-		print '		<textarea class="dev-tool-lang-textarea" autoresize="1" id="trad_'.$tradKey.'" name="trad['.$tradKey.']" >'.htmlentities($newTrad).'</textarea>';
+		print '		<textarea class="dev-tool-lang-textarea" autoresize="1" disablenewline="1" id="trad_'.$tradKey.'" name="trad['.$tradKey.']" >'.htmlentities($newTrad).'</textarea>';
 		print '	</td>';
 		print '</tr>';
 	}
@@ -238,6 +244,11 @@ function __display_add_missing_tranlations_form(){
 
 	print '</fieldset>';
 }
+
+/**
+ * Print langs stats
+ * @return void
+ */
 function __display_langs_stats(){
 	global $form, $module, $moduleLangFileManager, $langs, $currentLang, $moduleName,$langsStats,$allTranslationsFiles;
 
@@ -295,7 +306,7 @@ function __display_langs_stats(){
 		// Langs files list
 		foreach ($allTranslationsFiles as $fileName){
 			if(!$langFileStats[$fileName]->fileExist){
-				print '<td colspan="2">'.dolGetBadge($langs->trans('FileNotFound'), '','danger').'</td>';
+				print '<td colspan="2" class="center col-start-border">'.dolGetBadge($langs->trans('FileNotFound'), '','danger').'</td>';
 			}else{
 
 				$editUrl = dol_buildpath('devcommunitytools/tools/translate_module_lang.php',1);
@@ -352,5 +363,88 @@ function __display_langs_stats(){
 	print '</tbody>';
 	print '</table>';
 	print '</div>';
+
+}
+
+
+
+function __action_add_missing_tranlations(){
+	global $currentLang, $form, $module, $moduleLangFileManager, $langs, $moduleName,$langsStats,$allTranslationsFiles;
+
+	/**
+	 * @var \devCommunityTools\ModuleLangFileManager $moduleLangFileManager
+	 */
+
+	$targetLang = GETPOST('target-lang', 'aZ09');
+	$fileName = GETPOST('file-name', 'aZ09');
+	$postedLang = GETPOST('trad','array:restricthtml');
+
+	if(empty($postedLang)){
+		setEventMessage('NoTradToProcess', 'errors');
+		return null;
+	}
+
+	if(empty($moduleLangFileManager->translations[$targetLang][$fileName]) || !isset($moduleLangFileManager->translations[$currentLang][$fileName]) ){
+		setEventMessage('LangFileNotFound', 'errors');
+		return false;
+	}
+
+	$newTrads = array();
+	foreach($moduleLangFileManager->translations[$currentLang][$fileName] as $tradKey => $trad){
+		if(isset($moduleLangFileManager->translations[$targetLang][$fileName][$tradKey])){
+			// do not display input trad if already present in target
+			continue;
+		}
+
+		if(!empty($postedLang[$tradKey]) && !ctype_space($postedLang[$tradKey])){
+			$newTrads[$tradKey] = preg_replace('/\s+/', ' ', trim($postedLang[$tradKey]));
+		}
+	}
+
+	if($newTrads){
+		$langTargetFilePath =  $moduleLangFileManager->getLangFilePath($targetLang, $fileName);
+		if($langTargetFilePath){
+
+			if(!is_writable($langTargetFilePath)){
+				setEventMessage($langs->transnoentities('ErrorFileIsNotWritable',$langTargetFilePath), 'errors');
+				return false;
+			}
+
+			$TNewLines = array();
+//			$TNewLines[] = '';
+//			$TNewLines[] = '# MISSING TRANSLATION UPDATE ON '.date('Y-m-d H-i-s');
+
+			foreach($newTrads as $tmKey => $tmValue){
+				$TNewLines[] = $tmKey." = ".$tmValue;
+			}
+
+			$TNewLines[] = '';
+
+
+			$writeRes = file_put_contents($langTargetFilePath, implode("\n", $TNewLines), FILE_APPEND | LOCK_EX);
+
+			if($writeRes === false)
+			{
+				setEventMessage('Error: writing file : '.$langTargetFilePath, 'errors');
+				return false;
+			}
+			else
+			{
+				// add new trad to already fetched translations
+				foreach($newTrads as $tmKey => $tmValue){
+					$moduleLangFileManager->translations[$targetLang][$fileName][$tmKey] = $tmValue;
+				}
+				setEventMessage('UpdatedXmissingTranslations', count($newTrads));
+				return true;
+			}
+		}
+		elseif($langTargetFilePath === false){
+			setEventMessage($moduleLangFileManager->getLastError(), 'errors');
+			return false;
+		}
+	}else{
+		setEventMessage('NoTradToProcess', 'warning');
+		return null;
+	}
 
 }
