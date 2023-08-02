@@ -130,7 +130,7 @@ $help_url = '';
 $page_name = $langs->trans("DevCommunityTools").' - '.$langs->trans($devToolScriptName);
 $arrayofjs = array(
 	'devcommunitytools/js/devtools.js',
-	'devcommunitytools/js/deepl.class.js'
+	'devcommunitytools/js/devToolsInterface.class.js'
 );
 
 $arrayofcss = array(
@@ -175,7 +175,7 @@ print dol_get_fiche_end();
 require_once __DIR__.'/inc/__tools_footer.php';
 
 function __display_add_missing_tranlations_form(){
-	global $currentLang, $moduleLangFileManager, $langs, $moduleName, $deeplAPIKey, $deeplAPIKeyIsPro;
+	global $conf, $currentLang, $moduleLangFileManager, $langs, $moduleName, $deeplAPIKey, $deeplAPIKeyIsPro;
 
 	$targetLang = GETPOST('target-lang', 'aZ09');
 	$fileName = GETPOST('file-name', 'aZ09');
@@ -240,7 +240,8 @@ function __display_add_missing_tranlations_form(){
 		print '	<td style="width: 50%;">';
 		print '		<label class="dev-tool-lang-label" for="trad_'.$tradKeyEspaced.'" >'.$targetFlag.' '.$tradKey.'</label>';
 
-		if(!empty($deeplAPIKey)){
+
+		if(!empty($conf->global->DEVCOMMUNITYTOOLS_DEEPL_API_KEY)){
 			print ' <button href="" class="generate-translation-btn" '
 				.' data-language-code-src="'.strtoupper(\devCommunityTools\ModuleLangFileManager::getCountryCode($currentLang)).'" '
 				.' data-language-code-dest="'.strtoupper(\devCommunityTools\ModuleLangFileManager::getCountryCode($targetLang)).'" '
@@ -261,32 +262,37 @@ function __display_add_missing_tranlations_form(){
 
 	// Conf stored in conf.php (
 	$jsConf = array(
-		'deeplAPIKey' => !empty($deeplAPIKey)?$deeplAPIKey:'',
-		'deeplAPIKeyIsPro' => !empty($deeplAPIKeyIsPro)
+		'interfaceUrl' => dol_buildpath('devcommunitytools/interface.php',1),
+		'token' => newToken()
 	);
 
-	if(!empty($deeplAPIKey)){
+	if(!empty($conf->global->DEVCOMMUNITYTOOLS_DEEPL_API_KEY)){
 	?>
 	<script>
 		$(function() {
 			let translateConf = <?php print json_encode($jsConf); ?>;
-			let deepL = new DeepLApi({
-				APIUsePro: translateConf.deeplAPIKeyIsPro,
-				APIKey: translateConf.deeplAPIKey
-			})
-
 
 			$(".generate-translation-btn").on( "click", function(e) {
 				e.preventDefault();
-				let langSrc = $(this).attr('data-language-code-src');
-				let langDest = $(this).attr('data-language-code-dest');
-				let langKey = $(this).attr('data-trad-key');
-				let sourceTxt = $('.dev-tool-lang-textarea[name="source_trad['+langKey+']"]').first().val();
-				if(sourceTxt.length > 0){
-					deepL.getTranslations(sourceTxt, langDest, langSrc,  function(result){
-						console.log(result);
-						if(result.length>0 &&  result.translations.length>0){
-							$('.dev-tool-lang-textarea[name="trad['+langKey+']"]').val(result.translations[0].text)
+
+				let devToolsInterface = new DevToolsInterface({
+					interfaceUrl: translateConf.interfaceUrl,
+					token: translateConf.token
+				})
+
+				let sendData = {
+					langSrc  : $(this).attr('data-language-code-src'),
+					langDest : $(this).attr('data-language-code-dest'),
+					langKey  : $(this).attr('data-trad-key')
+				};
+
+				sendData.sourceTxt = $('#source_trad_' + sendData.langKey ).val();
+
+				if(sendData.sourceTxt.length > 0){
+
+					devToolsInterface.callInterface('deepl-translate', sendData,  function(response){
+						if(response.result > 0) {
+							$('#trad_' + sendData.langKey).val(response.data.translations[0].text);
 						}
 					});
 				}

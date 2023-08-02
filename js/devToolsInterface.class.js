@@ -1,14 +1,12 @@
-class DeepLApi {
+class DevToolsInterface {
 
 	/**
 	 * Config values are set at init
 	 * @type {{}}
 	 */
 	config = {
-		hostFree: 'api-free.deepl.com',
-		hostPro: 'api.deepl.com',
-		APIUsePro:false,// to set at init
-		APIKey: false, // to set at init
+		interfaceUrl: false, // to set at init
+		token : false // to set at init
 	};
 
 	/**
@@ -16,7 +14,8 @@ class DeepLApi {
 	 * @type {{}}
 	 */
 	langs = {
-		errorAjaxCall: "Erreur d'appel ajax"
+		errorAjaxCall: "Ajax call error",
+		errorAjaxCallDisconnected:"You are probably disconnected",
 	};
 
 	/**
@@ -35,13 +34,7 @@ class DeepLApi {
 		}
 	}
 
-	getDeeplApiUrl(addHttp = true){
-		if(this.config.APIUsePro){
-			return (addHttp?'https://':'') + this.config.hostPro;
-		}
 
-		return (addHttp?'https://':'') + this.config.hostFree;
-	}
 
 	/**
 	 * set event messages
@@ -76,59 +69,70 @@ class DeepLApi {
 	}
 
 
-	/**
-	 *
-	 * @param {string[]} texts
-	 * @param {string}target_lang
-	 * @param {string}source_lang default false to autodetect
-	 * @callback callBackFunction
-	 */
-	getTranslations(texts, target_lang,source_lang = false, callBackFunction){
-		let sendData = {
-			"text":texts,
-			"target_lang": target_lang
-		};
-
-		if(source_lang){
-			sendData.source_lang = source_lang;
-		}
-
-		this.callDeeplInterface('/v2/translate', sendData, callBackFunction)
-	}
-
 
 	/**
 	 *
-	 * @param {string} url
+	 * @param {string} action
 	 * @param {object} sendData
 	 * @callback callBackFunction
+	 * @callback callBackErrorFunction
 	 */
-	callDeeplInterface(url, sendData = {}, callBackFunction, callBackErrorFunction = false) {
+	callInterface(action, sendData = {}, callBackFunction) {
 
+		if(!this.config.interfaceUrl){
+			this.setEventMessage('Interface url not provided', false);
+			return false;
+		}
 
-
-
-		sendData = Object.assign(sendData, {
-			auth_key:this.config.APIKey
-		});
+		let ajaxData = {
+			'data': sendData,
+			'token': this.config.token,
+			'action': action,
+		};
 
 		$.ajax({
-			method: 'GET',
-			url: this.getDeeplApiUrl(true) + url,
-			// contentType: 'application/json',
-			dataType:'jsonp',
-			data: sendData,
-			success:  (response) => {
-				if (typeof callBackFunction === 'function') {
+			method: 'POST',
+			url: this.config.interfaceUrl,
+			dataType: 'json',
+			data: ajaxData,
+			success: (response) => {
+
+				if (typeof callBackFunction === 'function'){
 					callBackFunction(response);
 				} else {
-					console.error('Callback function invalide callDeeplInterface');
+					console.error('Callback function invalide for callKanbanInterface');
+				}
+
+				if(response.newToken != undefined){
+					this.config.token = response.newToken;
+				}
+
+				if(response.msg.length > 0) {
+					this.setEventMessage(response.msg, response.result > 0 ? true : false, response.result == 0 ? true : false );
+				}
+
+				if(response.debug.length > 0) {
+					console.log(response.debug);
 				}
 			},
-			error:  (err) => {
-				if (typeof callBackFunction === 'function') {
-					callBackFunction(err);
-				}else{
+			error: (err) => {
+
+				if(err.responseText.length > 0){
+
+					// detect login page in case of just disconnected
+					let loginPage = $(err.responseText).find('[name="actionlogin"]');
+					if(loginPage != undefined && loginPage.val() == 'login'){
+						this.setEventMessage(this.langs.errorAjaxCallDisconnected, false);
+
+						setTimeout(function (){
+							location.reload();
+						}, 2000);
+
+					}else{
+						this.setEventMessage(this.langs.errorAjaxCall, false);
+					}
+				}
+				else{
 					this.setEventMessage(this.langs.errorAjaxCall, false);
 				}
 			}

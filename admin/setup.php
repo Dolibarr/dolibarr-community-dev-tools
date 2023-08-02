@@ -97,67 +97,68 @@ if (!class_exists('FormSetup')) {
 $formSetup = new FormSetup($db);
 
 
-// HTTP HOST
-$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
-$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
-$item->cssClass = 'minwidth500';
-
+$formSetup->newItem('DeepLApiParameters')->setAsTitle();
 // Setup conf DEVCOMMUNITYTOOLS_MYPARAM1 as a simple string input
-$item = $formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM1');
-$item->defaultFieldValue = 'default value';
-
-// Setup conf DEVCOMMUNITYTOOLS_MYPARAM2 as a simple textarea input but we replace the text of field title
-$item = $formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM2');
-$item->nameText = $item->getNameText().' more html text ';
-
-// Setup conf DEVCOMMUNITYTOOLS_MYPARAM3
-$item = $formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM3');
-$item->setAsThirdpartyType();
-
-// Setup conf DEVCOMMUNITYTOOLS_MYPARAM4 : exemple of quick define write style
-$formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM4')->setAsYesNo();
-
-// Setup conf DEVCOMMUNITYTOOLS_MYPARAM5
-$formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM5')->setAsEmailTemplate('thirdparty');
-
-// Setup conf DEVCOMMUNITYTOOLS_MYPARAM6
-$formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM6')->setAsSecureKey()->enabled = 0; // disabled
-
-// Setup conf DEVCOMMUNITYTOOLS_MYPARAM7
-$formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM7')->setAsProduct();
-
-$formSetup->newItem('Title')->setAsTitle();
-
-// Setup conf DEVCOMMUNITYTOOLS_MYPARAM8
-$item = $formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM8');
-$TField = array(
-	'test01' => $langs->trans('test01'),
-	'test02' => $langs->trans('test02'),
-	'test03' => $langs->trans('test03'),
-	'test04' => $langs->trans('test04'),
-	'test05' => $langs->trans('test05'),
-	'test06' => $langs->trans('test06'),
-);
-$item->setAsMultiSelect($TField);
-$item->helpText = $langs->transnoentities('DEVCOMMUNITYTOOLS_MYPARAM8');
+$formSetup->newItem('DEVCOMMUNITYTOOLS_DEEPL_API_KEY');
+$formSetup->newItem('DEVCOMMUNITYTOOLS_DEEPL_USE_PRO')->setAsYesNo();
 
 
-// Setup conf DEVCOMMUNITYTOOLS_MYPARAM9
-$formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM9')->setAsSelect($TField);
 
 
-// Setup conf DEVCOMMUNITYTOOLS_MYPARAM10
-$item = $formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM10');
-$item->setAsColor();
-$item->defaultFieldValue = '#FF0000';
-$item->nameText = $item->getNameText().' more html text ';
-$item->fieldInputOverride = '';
-$item->helpText = $langs->transnoentities('AnHelpMessage');
-//$item->fieldValue = '';
-//$item->fieldAttr = array() ; // fields attribute only for compatible fields like input text
-//$item->fieldOverride = false; // set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too
-//$item->fieldInputOverride = false; // set this var to override field input
-//$item->fieldOutputOverride = false; // set this var to override field output
+
+//
+//// Setup conf DEVCOMMUNITYTOOLS_MYPARAM2 as a simple textarea input but we replace the text of field title
+//$item = $formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM2');
+//$item->nameText = $item->getNameText().' more html text ';
+//
+//// Setup conf DEVCOMMUNITYTOOLS_MYPARAM3
+//$item = $formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM3');
+//$item->setAsThirdpartyType();
+//
+//// Setup conf DEVCOMMUNITYTOOLS_MYPARAM4 : exemple of quick define write style
+//$formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM4')->setAsYesNo();
+//
+//// Setup conf DEVCOMMUNITYTOOLS_MYPARAM5
+//$formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM5')->setAsEmailTemplate('thirdparty');
+//
+//// Setup conf DEVCOMMUNITYTOOLS_MYPARAM6
+//$formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM6')->setAsSecureKey()->enabled = 0; // disabled
+//
+//// Setup conf DEVCOMMUNITYTOOLS_MYPARAM7
+//$formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM7')->setAsProduct();
+//
+//$formSetup->newItem('Title')->setAsTitle();
+//
+//// Setup conf DEVCOMMUNITYTOOLS_MYPARAM8
+//$item = $formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM8');
+//$TField = array(
+//	'test01' => $langs->trans('test01'),
+//	'test02' => $langs->trans('test02'),
+//	'test03' => $langs->trans('test03'),
+//	'test04' => $langs->trans('test04'),
+//	'test05' => $langs->trans('test05'),
+//	'test06' => $langs->trans('test06'),
+//);
+//$item->setAsMultiSelect($TField);
+//$item->helpText = $langs->transnoentities('DEVCOMMUNITYTOOLS_MYPARAM8');
+//
+//
+//// Setup conf DEVCOMMUNITYTOOLS_MYPARAM9
+//$formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM9')->setAsSelect($TField);
+//
+//
+//// Setup conf DEVCOMMUNITYTOOLS_MYPARAM10
+//$item = $formSetup->newItem('DEVCOMMUNITYTOOLS_MYPARAM10');
+//$item->setAsColor();
+//$item->defaultFieldValue = '#FF0000';
+//$item->nameText = $item->getNameText().' more html text ';
+//$item->fieldInputOverride = '';
+//$item->helpText = $langs->transnoentities('AnHelpMessage');
+////$item->fieldValue = '';
+////$item->fieldAttr = array() ; // fields attribute only for compatible fields like input text
+////$item->fieldOverride = false; // set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too
+////$item->fieldInputOverride = false; // set this var to override field input
+////$item->fieldOutputOverride = false; // set this var to override field output
 
 
 $setupnotempty =+ count($formSetup->items);

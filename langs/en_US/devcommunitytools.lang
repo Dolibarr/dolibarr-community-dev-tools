@@ -28,13 +28,13 @@ WarningMaxInputVarsIsBelowNumberOfInputs = WARNING : php ini max input vars (%s)
 # Admin page
 #
 DevCommunityToolsSetup = Dev Community Tools setup
-Settings = Settings
+DevCommunityToolsSettings = Setup
 DevCommunityToolsSetupPage = Dev Community Tools setup page
-DEVCOMMUNITYTOOLS_MYPARAM1 = My param 1
-DEVCOMMUNITYTOOLS_MYPARAM1Tooltip = My param 1 tooltip
-DEVCOMMUNITYTOOLS_MYPARAM2=My param 2
-DEVCOMMUNITYTOOLS_MYPARAM2Tooltip=My param 2 tooltip
 
+DeepLApiParameters = DeepL API parameters
+DEVCOMMUNITYTOOLS_DEEPL_API_KEY = DeepL API key
+DEVCOMMUNITYTOOLS_DEEPL_API_KEYTooltip = DeepL API key can be get at <a href="https://www.deepl.com/" >https://www.deepl.com/</a>
+DEVCOMMUNITYTOOLS_DEEPL_USE_PRO = Activate Pro Api usage (or disable to use free API)
 
 #
 # About page
@@ -86,6 +86,7 @@ AddMissingTranslationOfXFileFromYLangToZLang = Add missing translations of %s fr
 UpdatedXmissingTranslations = $s translations updated
 NoTradToProcess = No translation to process
 ErrorFileIsNotWritable = File <code>%s</code> isn't writable
+
 
 #
 # Tools - Url replace

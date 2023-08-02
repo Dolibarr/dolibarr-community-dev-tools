@@ -44,10 +44,10 @@ function devcommunitytoolsAdminPrepareHead()
 	$head[$h][2] = 'tools';
 	$h++;
 
-//	$head[$h][0] = dol_buildpath("/devcommunitytools/admin/setup.php", 1);
-//	$head[$h][1] = $langs->trans("Settings");
-//	$head[$h][2] = 'settings';
-//	$h++;
+	$head[$h][0] = dol_buildpath("/devcommunitytools/admin/setup.php", 1);
+	$head[$h][1] = $langs->trans("DevCommunityToolsSettings");
+	$head[$h][2] = 'settings';
+	$h++;
 
 	/*
 	$head[$h][0] = dol_buildpath("/devcommunitytools/admin/myobject_extrafields.php", 1);
