@@ -31,7 +31,7 @@ DevCommunityToolsSetup = Dev Community Tools setup
 DevCommunityToolsSettings = Setup
 DevCommunityToolsSetupPage = Dev Community Tools setup page
 
-DeepLApiParameters = DeepL API parameters
+DeepLApiParameters = DeepL API parameters : Used for translations suggestions
 DEVCOMMUNITYTOOLS_DEEPL_API_KEY = DeepL API key
 DEVCOMMUNITYTOOLS_DEEPL_API_KEYTooltip = DeepL API key can be get at <a href="https://www.deepl.com/" >https://www.deepl.com/</a>
 DEVCOMMUNITYTOOLS_DEEPL_USE_PRO = Activate Pro Api usage (or disable to use free API)
