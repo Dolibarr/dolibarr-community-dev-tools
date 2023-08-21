@@ -105,6 +105,7 @@ function __getTranslationFromDeeplAPI(){
 	curl_setopt($ch, CURLOPT_URL, $url.'/v2/translate');
 	curl_setopt($ch, CURLOPT_POST, 1);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postRequest));
+	$jsonResponse->debug = http_build_query($postRequest);
 
 	// Receive server response ...
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

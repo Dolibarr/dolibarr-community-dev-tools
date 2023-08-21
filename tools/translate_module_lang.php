@@ -243,8 +243,8 @@ function __display_add_missing_tranlations_form(){
 
 		if(!empty($conf->global->DEVCOMMUNITYTOOLS_DEEPL_API_KEY)){
 			print ' <button href="" class="generate-translation-btn" '
-				.' data-language-code-src="'.strtoupper(\devCommunityTools\ModuleLangFileManager::getCountryCode($currentLang)).'" '
-				.' data-language-code-dest="'.strtoupper(\devCommunityTools\ModuleLangFileManager::getCountryCode($targetLang)).'" '
+				.' data-language-code-src="'.strtoupper(\devCommunityTools\ModuleLangFileManager::getLangCode($currentLang)).'" '
+				.' data-language-code-dest="'.strtoupper(\devCommunityTools\ModuleLangFileManager::getLangCode($targetLang)).'" '
 				.' data-trad-key="'.$tradKeyEspaced.'" '
 				.' ><span style="font-size: 0.8em;" class="fa fa-refresh"></span> '.$langs->trans('GenerateTranslation').'</button>';
 		}

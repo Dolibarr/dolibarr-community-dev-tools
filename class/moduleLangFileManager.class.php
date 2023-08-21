@@ -217,4 +217,17 @@ class ModuleLangFileManager{
 		return strtolower(end($langCodeArr));
 	}
 
+	/**
+	 * @param $langCode
+	 * @return mixed|string
+	 */
+	public static function getLangCode($langCode){
+		if(!static::isLangCodeName($langCode)){
+			return false;
+		}
+
+		$langCodeArr = explode('_', $langCode);
+		return strtolower(reset($langCodeArr));
+	}
+
 }
