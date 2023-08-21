@@ -111,7 +111,7 @@ class DevToolsInterface {
 					this.setEventMessage(response.msg, response.result > 0 ? true : false, response.result == 0 ? true : false );
 				}
 
-				if(response.debug.length > 0) {
+				if(response.debug != undefined && response.debug != null) {
 					console.log(response.debug);
 				}
 			},
