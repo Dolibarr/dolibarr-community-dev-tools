@@ -195,7 +195,7 @@ function __display_add_missing_tranlations_form(){
 		print '<div class="warning" >'.$langs->transnoentities('ErrorFileIsNotWritable',$langTargetFilePath).'</div>';
 	}
 
-	print '<form action="'.$_SERVER['PHP_SELF'].'" type="post" >';
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="post" >';
 	$numInput = 0;
 	print '	<input type="hidden" name="module" value="'.dol_escape_htmltag($moduleName).'">';$numInput++;
 	print '	<input type="hidden" name="target-lang" value="'.dol_escape_htmltag($targetLang).'">';$numInput++;
