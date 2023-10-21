@@ -96,5 +96,5 @@ UrlReplaceDesc = Will replace url in tables
 ReplaceUrlInTables = Replace URLs in tables
 OldUrl = Old url
 NewUrl = New url
-ChangeDomainToo = Change domain too not only url
+ChangeDomainToo = Change domain too, not only url
 ReplaceUrlXByY = Replace URL %s by %s

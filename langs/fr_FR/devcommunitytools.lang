@@ -1,0 +1,50 @@
+# FR
+
+DevCommunityToolsSetup = Dev Community Tools configuration
+ModuleDevCommunityToolsName = Outils pour la communauté des développeurs
+ModuleDevCommunityToolsDesc = Collection d'outils utiles aux développeurs de la communauté Doilibarr
+DevCommunityTools = Outils pour la communauté des développeurs
+WarningMaxInputVarsIsBelowNumberOfInputs = WARNING : php ini max input vars (%s) is below number of needed input (%s)
+DevCommunityToolsSettings = Paramètres
+DevCommunityToolsSetupPage = Page de configuration des outils de la communauté de développement
+DEVCOMMUNITYTOOLS_DEEPL_API_KEY = DeepL Clé API
+DEVCOMMUNITYTOOLS_DEEPL_API_KEYTooltip = La clé de l'API DeepL peut être obtenue à l'adresse <a href="https://www.deepl.com/" >https://www.deepl.com/</a>
+DEVCOMMUNITYTOOLS_DEEPL_USE_PRO = Activer l'utilisation de l'API Pro (ou la désactiver pour utiliser l'API gratuite)
+About = A propos
+DevCommunityToolsAbout = À propos des outils de la communauté de développement
+DevCommunityToolsAboutPage = Page d'accueil des outils de la communauté de développement
+DevCommunityToolsArea = Home Dev Communauté Outils
+MyPageName = Nom de ma page
+MyWidget = Mon widget
+MyWidgetDescription = Description de mon widget
+DevCommunityToolsPage = Liste des outils
+DevToolsNeedsDevEnvironmentToAllowUsage = Nécessite d'être dans un environnement de développement
+DevToolsNeedsDevEnvironmentToAllowUsageDesc = Les outils de développement sont limités aux administrateurs et le fichier conf.php doit contenir <strong>$dolibarr_main_prod = 0;</strong> pour éviter l'utilisation en production.
+TitleMissing = Titre manquant
+GoToToolPage = Aller à la page de l'outil
+BackToToolsList = Retour à la liste des outils
+TranslateModules = Traduire les modules
+TranslateModulesDesc = Créer ou mettre à jour des traductions manquantes
+XExternalModulesFounds = %s modules externes trouvés
+ManageMissingTranslations = Gérer les traductions manquantes
+CurrentLangIsX = La langue actuelle utilisée pour la comparaison est <strong>%s</strong>.
+PleaseSelectASourceLangWithTranslationBeforeStart = Veuillez sélectionner une langue source avec traduction avant de commencer
+ModuleNotFoundCodeX = Module introuvable : code d'erreur %s
+ModuleXFoundButDoesNotMatchNameGivenY = Le module %s a été trouvé mais ne correspond pas au nom donné : %s.
+FileNotFound = Fichier non trouvé
+MissingTranslations = Traductions manquantes
+DeepLApiParameters = DeepL Paramètres API : Utilisés pour les suggestions de traductions
+AdditionalTranslations = Traductions supplémentaires
+ClickToUseXAsBaseLanguageForComparaison = Cliquez pour utiliser "%s" comme référence linguistique pour la comparaison
+ChangeReferenceLanguage = Modifier la langue de référence
+AddMissingTranslationOfXFileFromYLangToZLang = Ajouter les traductions manquantes de %s de %s à %s
+UpdatedXmissingTranslations = Mise à jour des traductions de $s
+NoTradToProcess = Pas de traduction à effectuer
+ErrorFileIsNotWritable = Le fichier %s n'est pas accessible en écriture
+UrlReplace = Remplacer l'URL
+UrlReplaceDesc = Remplacera l'url dans les tableaux
+ReplaceUrlInTables = Remplacer les URL dans les tableaux
+OldUrl = Ancienne url
+NewUrl = Nouvelle url
+ChangeDomainToo = Changer le domaine aussi, pas seulement l'url
+ReplaceUrlXByY = Remplacer l'URL %s par %s
