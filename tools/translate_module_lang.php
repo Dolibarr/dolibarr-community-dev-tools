@@ -182,7 +182,7 @@ function __display_add_missing_tranlations_form(){
 	$postedLang = GETPOST('trad','array:restricthtml');
 
 
-	if(empty($moduleLangFileManager->translations[$targetLang][$fileName]) || !isset($moduleLangFileManager->translations[$currentLang][$fileName]) ){
+	if(!isset($moduleLangFileManager->translations[$currentLang][$fileName]) ){
 		setEventMessage('LangFileNotFound', 'errors');
 		return false;
 	}
@@ -443,10 +443,11 @@ function __action_add_missing_tranlations(){
 		return null;
 	}
 
-	if(empty($moduleLangFileManager->translations[$targetLang][$fileName]) || !isset($moduleLangFileManager->translations[$currentLang][$fileName]) ){
+	if(!isset($moduleLangFileManager->translations[$currentLang][$fileName]) ){
 		setEventMessage('LangFileNotFound', 'errors');
 		return false;
 	}
+
 
 	$newTrads = array();
 	foreach($moduleLangFileManager->translations[$currentLang][$fileName] as $tradKey => $trad){
