@@ -45,7 +45,7 @@ class LogManagerItem {
 		// Use only on command line
 		$isBash = true;
 		$sapi_type = php_sapi_name();
-		if (substr($sapi_type, 0, 3) == 'cgi' || $sapi_type == 'apache2handler') {
+		if (substr($sapi_type, 0, 3) == 'cgi' || $sapi_type == 'apache2handler' || $sapi_type == 'fpm-fcgi') {
 			$isBash = false;
 		}
 
@@ -60,6 +60,7 @@ class LogManagerItem {
 	 */
 	public function output(){
 		if(static::isBash()){
+			print '<pre>'.print_r("test",1).'</pre>';
 			$bashColor = '0;37';
 			if($this->type == static::TYPE_ERROR ){
 				$bashColor = '1;37;41';

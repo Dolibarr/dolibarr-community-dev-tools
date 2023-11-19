@@ -79,4 +79,17 @@ class LogManager {
 	public function clear(){
 		$this->logs = array();
 	}
+
+	/**
+	 * @return array
+	 */
+	public function getErrors(){
+		$errors = array();
+		foreach($this->logs as $item){
+			if($item->type == LogManagerItem::TYPE_ERROR){
+				$errors[] = $item;
+			}
+		}
+		return $errors;
+	}
 }

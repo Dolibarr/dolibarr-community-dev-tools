@@ -97,4 +97,5 @@ ReplaceUrlInTables = Replace URLs in tables
 OldUrl = Old url
 NewUrl = New url
 ChangeDomainToo = Change domain too, not only url
+UseRollback = Use a rollback in case of error
 ReplaceUrlXByY = Replace URL %s by %s

@@ -145,6 +145,13 @@ if(!checkDevToolsAccess(false)){
 		'icon' => 'fa fa-flag'
 	);
 
+	$toolList[] = array(
+		'title'=> 'PriceImpact',
+		'desc' => 'PriceImpactDesc',
+		'file' => 'devcommunitytools/tools/price_impact.php',
+		'icon' => 'fa fa-dollar-sign'
+	);
+
 	devToolsListSortByItemChildArrayKey($toolList,'title');
 
 

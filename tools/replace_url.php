@@ -16,6 +16,7 @@ $label = GETPOST('label', 'alpha');
 $oldUrl = GETPOST('old-url', 'alpha');
 $newUrl = GETPOST('new-url', 'alpha');
 $changeDomaineToo = GETPOST('change-domain-too', 'int');
+$useRollback = GETPOST('use-rollback', 'int');
 
 $error = 0;
 
@@ -75,6 +76,7 @@ print '<input type="url" name="new-url" placeholder="'.$langs->trans('NewUrl').'
 print '<button type="submit">'.$langs->trans('Submit').'</button>';
 
 print '<br/><label><input type="checkbox" name="change-domain-too"  value="1" '.($changeDomaineToo?' checked ':'').' > '.$langs->trans('ChangeDomainToo').'</label>';
+print '<br/><label><input type="checkbox" name="use-rollback"  value="1" '.($useRollback?' checked ':'').' > '.$langs->trans('UseRollback').'</label>';
 
 
 print '</fieldset>';
@@ -83,7 +85,6 @@ print '</form>';
 
 
 $logManager->output(true);
-
 /*
  * End Script View
  */
@@ -101,23 +102,22 @@ require_once __DIR__.'/inc/__tools_footer.php';
  * @param devCommunityTools\LogManager $logManager
  * @return false|void
  */
-function __processUrlReplace($oldUrl, $newUrl, $logManager, $replaceDomaineOnly = false){
+function __processUrlReplace($oldUrl, $newUrl, $logManager, $replaceDomaineOnly = false, $use_rollback = true) {
 	global $db, $langs;
-
 	require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php';
 	$validate = new Validate($db, $langs);
 
-	if (empty($oldUrl) || !$validate->isUrl($oldUrl)){
+	if (empty($oldUrl) || !$validate->isUrl($oldUrl)) {
 		$logManager->addError($validate->error);
 		return false;
 	}
 
-	if (empty($newUrl) || !$validate->isUrl($newUrl)){
+	if (empty($newUrl) || !$validate->isUrl($newUrl)) {
 		$logManager->addError($validate->error);
 		return false;
 	}
 
-	if($replaceDomaineOnly){
+	if ($replaceDomaineOnly) {
 		$parseOldUrl = parse_url($oldUrl);
 		$parseNewUrl = parse_url($newUrl);
 		$oldUrl = $parseOldUrl['host'];
@@ -126,31 +126,40 @@ function __processUrlReplace($oldUrl, $newUrl, $logManager, $replaceDomaineOnly 
 
 
 	$logManager->addLog($langs->trans('ReplaceUrlXByY', $oldUrl, $newUrl));
+	$db->begin();
+	$tables = array('c_email_templates' => array('content'), 'user' => array('signature'), 'mailing' => array('sujet', 'body'));
 
-	$tables = array(
-		'c_email_templates' => array( 'content'),
-		'user' => array( 'signature'),
-		'mailing' => array( 'sujet', 'body')
-	);
+	if ($use_rollback) {
+		$db->begin();
+	}
 
-	foreach ($tables as $tableName => $cols){
-		$tableName = MAIN_DB_PREFIX.$tableName;
-		$sqlShowTable = "SHOW TABLES LIKE '".$db->escape($tableName)."' ";
+
+	foreach ($tables as $tableName => $cols) {
+		$tableName = MAIN_DB_PREFIX . $tableName;
+		$sqlShowTable = "SHOW TABLES LIKE '" . $db->escape($tableName) . "' ";
 		$resST = $db->query($sqlShowTable);
-		if($resST && $db->num_rows($resST) > 0) {
-			foreach ($cols as $col){
-				$sql = "UPDATE `".$db->escape($tableName)."` SET `".$db->escape($col)."` = REPLACE(`".$db->escape($col)."`,'".$db->escape($oldUrl)."' ,'".$db->escape($newUrl)."');";
+		if ($resST && $db->num_rows($resST) > 0) {
+			foreach ($cols as $col) {
+				$sql = "UPDATE `" . $db->escape($tableName) . "` SET `" . $db->escape($col) . "` = REPLACE(`" . $db->escape($col) . "`,'" . $db->escape($oldUrl) . "' ,'" . $db->escape($newUrl) . "');";
 				$resCol = $db->query($sql);
-				if(!$sql){
-					$logManager->addError($tableName. " :  ".$col." UPDATE ERROR ".$db->error());
-				}else{
+				if (!$sql) {
+					$logManager->addError($tableName . " :  " . $col . " UPDATE ERROR " . $db->error());
+					$db->rollback();
+				} else {
 					$num = $db->affected_rows($resCol);
-					$logManager->addSuccess($tableName. " :  ".$col." => ".$num);
+					$logManager->addSuccess($tableName . " :  " . $col . " => " . $num);
 				}
 			}
+		} else {
+			$logManager->addError("Error : " . $sqlShowTable . " " . $db->error());
 		}
-		else{
-			$logManager->addError("Error : " .$sqlShowTable. " ". $db->error());
-		}
+	}
+
+	if (!empty($logManager->getErrors()) && $use_rollback) {
+		$db->rollback();
+		$logManager->addError($langs->trans("UsedRollback"));
+	} else {
+		$db->commit();
+		$logManager->addError($langs->trans("Commited"));
 	}
 }
