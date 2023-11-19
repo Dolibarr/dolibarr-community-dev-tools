@@ -60,7 +60,6 @@ class LogManagerItem {
 	 */
 	public function output(){
 		if(static::isBash()){
-			print '<pre>'.print_r("test",1).'</pre>';
 			$bashColor = '0;37';
 			if($this->type == static::TYPE_ERROR ){
 				$bashColor = '1;37;41';
