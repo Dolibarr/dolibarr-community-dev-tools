@@ -32,7 +32,7 @@ else{
 if($action == 'confirm_massive_update'){
 
 	if(!empty($updateproductprices)) {
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE ref LIKE '".$ref."%'";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE ref LIKE '".$db->escape($ref)."%'";
 		$db->begin();
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -44,9 +44,9 @@ if($action == 'confirm_massive_update'){
 //                $tempvariation = floatval($priceimpact) - $oldvariationprice;
 				$tempvariation = floatval($priceimpact);
 				if (empty($priceimpact)) {
-					$sql3 = " UPDATE " . MAIN_DB_PREFIX . "product_price SET price = ($tempvariation), price_ttc = price * (1 + (tva_tx/100)) WHERE fk_product = " . $obj->rowid . ";";
+					$sql3 = " UPDATE " . MAIN_DB_PREFIX . "product_price SET price = (".$db->escape($tempvariation)."), price_ttc = price * (1 + (tva_tx/100)) WHERE fk_product = " . $obj->rowid . ";";
 				} else
-					$sql3 = " UPDATE " . MAIN_DB_PREFIX . "product_price SET price = price + ($tempvariation), price_ttc = price * (1 + (tva_tx/100)) WHERE fk_product = " . $obj->rowid . ";";
+					$sql3 = " UPDATE " . MAIN_DB_PREFIX . "product_price SET price = price + (".$db->escape($tempvariation)."), price_ttc = price * (1 + (tva_tx/100)) WHERE fk_product = " . $obj->rowid . ";";
 				$resql3 = $db->query($sql3);
 				if(!$resql3){
 					$logManager->addError($db->lasterror());
@@ -63,7 +63,7 @@ if($action == 'confirm_massive_update'){
 
 //    $sql3 .= "UPDATE ".MAIN_DB_PREFIX."product_attribute_combination SET ".MAIN_DB_PREFIX."product_attribute_combination.variation_price = $priceimpact WHERE ".MAIN_DB_PREFIX."product_attribute_combination.fk_product_child IN (SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE ref LIKE '".$ref."%');";
 	if(!empty($conf->variants->enabled)) {
-		$sql3 = "UPDATE " . MAIN_DB_PREFIX . "product_attribute_combination SET " . MAIN_DB_PREFIX . "product_attribute_combination.variation_price = $priceimpact WHERE " . MAIN_DB_PREFIX . "product_attribute_combination.fk_product_child IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "product WHERE ref LIKE '" . $ref . "%');";
+		$sql3 = "UPDATE " . MAIN_DB_PREFIX . "product_attribute_combination SET " . MAIN_DB_PREFIX . "product_attribute_combination.variation_price = ".$db->escape($priceimpact)." WHERE " . MAIN_DB_PREFIX . "product_attribute_combination.fk_product_child IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "product WHERE ref LIKE '" . $db->escape($ref). "%');";
 		$resql3 = $db->query($sql3);
 		if (!$resql3) {
 			$logManager->addError($db->lasterror());
