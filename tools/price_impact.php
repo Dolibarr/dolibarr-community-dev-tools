@@ -119,7 +119,7 @@ print $langs->trans("PriceImpactInfo2");
 print $langs->trans("PriceImpactInfo3");
 print '</div>';
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="fichecenter">';
 
 
 print '<fieldset>';
@@ -171,9 +171,7 @@ print '</table>';
 print '</form>';
 print '</fieldset>';
 
-print '</div><div class="fichetwothirdright">';
-
-print '</div></div>';
+print '</div>';
 print $logManager->output(true);
 
 // End of page
