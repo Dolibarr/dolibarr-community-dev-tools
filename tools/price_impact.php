@@ -37,23 +37,16 @@ if($action == 'confirm_massive_update'){
 		$resql = $db->query($sql);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {
-//            $productids[] = $obj->rowid;
-//                $sql2 = "SELECT variation_price FROM " . MAIN_DB_PREFIX . "product_attribute_combination WHERE fk_product_child = " . $obj->rowid . ";";
-//                $resql2 = $db->query($sql2);
-//                $oldvariationprice = $db->fetch_object($resql2)->variation_price;
-//                $tempvariation = floatval($priceimpact) - $oldvariationprice;
 				$tempvariation = floatval($priceimpact);
 				if (empty($priceimpact)) {
-					$sql3 = " UPDATE " . MAIN_DB_PREFIX . "product_price SET price = (".$db->escape($tempvariation)."), price_ttc = price * (1 + (tva_tx/100)) WHERE fk_product = " . $obj->rowid . ";";
+					$sql3 = " UPDATE " . MAIN_DB_PREFIX . "product_price SET price = (".$db->escape($tempvariation)."), price_ttc = price * (1 + (tva_tx/100)) WHERE fk_product = " . (int)$obj->rowid . ";";
 				} else
-					$sql3 = " UPDATE " . MAIN_DB_PREFIX . "product_price SET price = price + (".$db->escape($tempvariation)."), price_ttc = price * (1 + (tva_tx/100)) WHERE fk_product = " . $obj->rowid . ";";
+					$sql3 = " UPDATE " . MAIN_DB_PREFIX . "product_price SET price = price + (".$db->escape($tempvariation)."), price_ttc = price * (1 + (tva_tx/100)) WHERE fk_product = " . (int)$obj->rowid . ";";
 				$resql3 = $db->query($sql3);
 				if(!$resql3){
 					$logManager->addError($db->lasterror());
 					break;
 				}
-
-//                $sql3 .= " UPDATE " . MAIN_DB_PREFIX . "product_price SET price = price + ($tempvariation), price_ttc = price * (1 + (tva_tx/100)) WHERE fk_product = " . $obj->rowid . ";";
 			}
 		}
 		else{
@@ -61,7 +54,6 @@ if($action == 'confirm_massive_update'){
 		}
 	}
 
-//    $sql3 .= "UPDATE ".MAIN_DB_PREFIX."product_attribute_combination SET ".MAIN_DB_PREFIX."product_attribute_combination.variation_price = $priceimpact WHERE ".MAIN_DB_PREFIX."product_attribute_combination.fk_product_child IN (SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE ref LIKE '".$ref."%');";
 	if(!empty($conf->variants->enabled)) {
 		$sql3 = "UPDATE " . MAIN_DB_PREFIX . "product_attribute_combination SET " . MAIN_DB_PREFIX . "product_attribute_combination.variation_price = ".$db->escape($priceimpact)." WHERE " . MAIN_DB_PREFIX . "product_attribute_combination.fk_product_child IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "product WHERE ref LIKE '" . $db->escape($ref). "%');";
 		$resql3 = $db->query($sql3);
@@ -70,7 +62,6 @@ if($action == 'confirm_massive_update'){
 		}
 	}
 
-
 	if(!empty($logManager->getErrors())){
 		$db->rollback();
 	}
@@ -78,11 +69,9 @@ if($action == 'confirm_massive_update'){
 		$db->commit();
 		header("Location: ".$_SERVER["PHP_SELF"]."?update_status=done");
 	}
-
 }
 
 llxHeader("", $langs->trans("PriceimpactonvariantsArea"));
-//$mysqli = new mysqli($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name);
 
 if($update_status == "done" && empty($action)){
 	setEventMessage($langs->trans("UpdateDone"));
@@ -103,8 +92,7 @@ if($action == 'search_variants'){
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE ref LIKE '".$ref."%';";
 	$resql = $db->query($sql);
 	if($resql){
-		$message = '';
-		$message .= $resql->num_rows." ".$langs->trans('VariantsFound').".";
+		$message = $resql->num_rows." ".$langs->trans('VariantsFound').".";
 		$message .= "</br>".$langs->trans("UpdateConfirmAsk");
 		if(!empty($updateproductprices)) {
 			$message .= "</br>".$langs->trans("UpdatePriceActivated");
@@ -180,6 +168,7 @@ print '</div><div class="fichetwothirdright">';
 
 print '</div></div>';
 print $logManager->output(true);
+
 // End of page
 llxFooter();
 $db->close();
