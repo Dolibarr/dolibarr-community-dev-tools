@@ -100,7 +100,7 @@ require_once __DIR__.'/inc/__tools_footer.php';
  * @param string $oldUrl
  * @param string $newUrl
  * @param devCommunityTools\LogManager $logManager
- * @return false|void
+ * @return false
  */
 function __processUrlReplace($oldUrl, $newUrl, $logManager, $replaceDomaineOnly = false, $use_rollback = true) {
 	global $db, $langs;
@@ -129,10 +129,6 @@ function __processUrlReplace($oldUrl, $newUrl, $logManager, $replaceDomaineOnly 
 	$db->begin();
 	$tables = array('c_email_templates' => array('content'), 'user' => array('signature'), 'mailing' => array('sujet', 'body'));
 
-	if ($use_rollback) {
-		$db->begin();
-	}
-
 
 	foreach ($tables as $tableName => $cols) {
 		$tableName = MAIN_DB_PREFIX . $tableName;
@@ -144,7 +140,11 @@ function __processUrlReplace($oldUrl, $newUrl, $logManager, $replaceDomaineOnly 
 				$resCol = $db->query($sql);
 				if (!$sql) {
 					$logManager->addError($tableName . " :  " . $col . " UPDATE ERROR " . $db->error());
-					$db->rollback();
+					if($use_rollback){
+						$logManager->addError($langs->trans("UsedRollback"));
+						$db->rollback();
+						return false;
+					}
 				} else {
 					$num = $db->affected_rows($resCol);
 					$logManager->addSuccess($tableName . " :  " . $col . " => " . $num);
@@ -155,11 +155,6 @@ function __processUrlReplace($oldUrl, $newUrl, $logManager, $replaceDomaineOnly 
 		}
 	}
 
-	if (!empty($logManager->getErrors()) && $use_rollback) {
-		$db->rollback();
-		$logManager->addError($langs->trans("UsedRollback"));
-	} else {
-		$db->commit();
-		$logManager->addError($langs->trans("Commited"));
-	}
+	$db->commit();
+	return true;
 }
