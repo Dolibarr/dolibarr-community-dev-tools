@@ -16,6 +16,7 @@ $hookmanager->initHooks(array('devcommunitytools'.$devToolScriptName));
 $action = GETPOST('action', 'aZ09');
 $ref = GETPOST("ref");
 $priceimpact = GETPOST("priceimpact");
+$backtopage = GETPOST('backtopage', 'alpha');
 $updateproductprices = GETPOST("updateproductprices");
 $update_status = GETPOST("update_status");
 $logManager = new devCommunityTools\LogManager();
@@ -108,8 +109,10 @@ if($action == 'search_variants'){
 }
 
 
+// Subheader
+$linkback = '<a href="'.($backtopage ? $backtopage : dol_buildpath('/devcommunitytools/admin/tools.php', 1)).'">'.$langs->trans("BackToToolsList").'</a>';
+print load_fiche_titre($langs->trans("PriceimpactonvariantsArea"), $linkback, 'title_setup');
 
-print load_fiche_titre($langs->trans("PriceimpactonvariantsArea"), '', 'priceimpactonvariants.png@priceimpactonvariants');
 print '<div class="info">';
 print $langs->trans("PriceImpactInfo1");
 print $langs->trans("PriceImpactInfo2");
@@ -119,6 +122,8 @@ print '</div>';
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
+print '<fieldset>';
+print '<legend>'.$langs->trans("PriceimpactonvariantsArea").'</legend>';
 print '<form action="" method="POST">';
 print '<input name="action" value="search_variants" hidden/>';
 print '<input name="token" value="'.$token.'" hidden/>';
@@ -164,6 +169,8 @@ print '</tr>';
 print '</tbody>';
 print '</table>';
 print '</form>';
+print '</fieldset>';
+
 print '</div><div class="fichetwothirdright">';
 
 print '</div></div>';
