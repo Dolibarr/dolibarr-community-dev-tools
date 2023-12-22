@@ -2,7 +2,7 @@
 
 ## Features
 
-This module is a collection of tools helpful for the developers of Doilibarr community.
+This repository is a collection of tools and modules helpful for the developers of Doilibarr community.
 
 
 <!--
