@@ -1,0 +1,168 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>SQL to PHP</title>
+    <style>
+        textarea {
+            width: 100%;
+            height: 35vh;
+        }
+
+        h2 {
+            font-size: 60%;
+            font-family: Sans-Serif;
+        }
+
+        pre {
+            /*border: solid 1px #b6b6b6;*/
+            padding: 5px;
+            width: 100%;
+        }
+        table td, table th {
+            border: solid 1px #b6b6b6;
+        }
+        table { border-collapse: collapse; }
+    </style>
+</head>
+<body>
+<div>
+    <details>
+        <summary>README</summary>
+        <p>
+        This is a simple tool to convert a pretty-printed pure SQL query (for instance a query that you fine-tuned in
+            your IDE or in PHPMyAdmin) into PHP code you cane paste in your Dolibarr project, while keeping the result
+            readable and indented.
+        </p>
+        <p>There is no actual SQL parsing involved, only performs string replacements.
+            However, it works well enough to be used with most common Dolibar SQL queries.</p>
+        <h3>Example :</h3>
+        <table>
+            <thead><tr><th>What you paste</th><th>What you get</th></tr></thead>
+            <tbody><tr>
+                <td><pre>SELECT product.ref, COUNT(product.ref) AS nb, SUM(tl.total_ht) AS total, AVG(tl.total_ht) AS avg
+FROM llx_propal AS p,
+     llx_propaldet AS tl,
+     llx_product AS product
+         INNER JOIN llx_societe_commerciaux AS sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = 1
+WHERE p.entity IN (1)
+  AND p.rowid = tl.fk_propal
+  AND tl.fk_product = product.rowid
+  AND p.datep BETWEEN '2023-01-01 00:00:00' AND '2023-12-31 23:59:59'
+GROUP BY product.ref
+ORDER BY nb DESC;</pre></td>
+                <td><pre>$sql = /** @lang SQL */
+     "SELECT product.ref, COUNT(product.ref) AS nb, SUM(tl.total_ht) AS total, AVG(tl.total_ht) AS avg"
+     . " FROM " . $db->prefix() . "propal AS p,"
+     . "      " . $db->prefix() . "propaldet AS tl,"
+     . "      " . $db->prefix() . "product AS product"
+     . "          INNER JOIN " . $db->prefix() . "societe_commerciaux AS sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = 1"
+     . " WHERE p.entity IN (1)"
+     . "   AND p.rowid = tl.fk_propal"
+     . "   AND tl.fk_product = product.rowid"
+     . "   AND p.datep BETWEEN '2023-01-01 00:00:00' AND '2023-12-31 23:59:59'"
+     . " GROUP BY product.ref"
+     . " ORDER BY nb DESC;";
+                </pre></td>
+            </tr></tbody>
+        </table>
+    </details>
+    <br>
+</div>
+<h2>Paste SQL here</h2>
+<textarea id="ta1"></textarea>
+<h2>Copy this and paste it in your PHP code for Dolibarr</h2>
+<textarea id="ta2"></textarea>
+<details>
+    <summary>HTML Markup</summary>
+    <h2>Copy this and paste it in a text input that allows simple HTML markup</h2>
+    <textarea id="ta3"></textarea>
+    <h2>Preview of HTML markup</h2>
+    <div id="d4"></div>
+</details>
+</body>
+<script type="text/javascript">
+    let SQLKeywordRegexp = new RegExp(
+        '\\b(SELECT|UPDATE|SET|UPDATE|INSERT INTO'
+        + '|ORDER BY|DROP|FROM|WHERE|AND|OR|AS|NOT|IS NULL'
+        + '|(?:LEFT |RIGHT |INNER |OUTER )?JOIN|ON|GROUP BY|LIMIT'
+        + '|DISTINCT'
+        + '|CURDATE|INTERVAL|SUM|COUNT|REGEX|LIKE|IN|COALESCE)\\b',
+        'gi'
+    );
+
+    function upperCaseSQLKeywords(sql) {
+        return sql.replace(SQLKeywordRegexp, (g) => g.toUpperCase());
+    }
+
+    /**
+     *
+     * @param {string} txt
+     * @param {boolean} usedoublequotes
+     * @param {string} dbprefix
+     * @returns {string}
+     */
+    function prepareForDolibarrPHP(txt, usedoublequotes = true, dbprefix = '$db->prefix()') {
+        txt = txt.replace(/\\/g, '\\\\');
+        if (usedoublequotes) {
+            txt = txt.replace(/"/g, '\\"');
+        } else {
+            txt = txt.replace(/'/g, '\\\'');
+        }
+        txt = txt.replace(/llx_/g, usedoublequotes ? `" . ${dbprefix} . "` : `' . ${dbprefix} . '`);
+        return txt;
+    }
+
+    /**
+     * Returns the SQL query wrapped in quotes, where 'llx_' is replaced
+     * with $db->prefix(), single quotes are escaped etc.
+     * @param {string} sql
+     * @param {boolean} usedoublequotes
+     * @param {string} dbprefix
+     * @returns {string}
+     */
+    function makePHPSQL(sql, usedoublequotes = true, dbprefix = '$db->prefix()') {
+        sql = sql.replace(/\r\n/g, '\n');
+        sql = upperCaseSQLKeywords(sql);
+        lines = sql.split('\n');
+        lines = lines.map(function (line, i) {
+            line = prepareForDolibarrPHP(line, usedoublequotes, dbprefix);
+            if (!i) {
+                return usedoublequotes ?
+                    `$sql = /** @lang SQL */\n     "${line}"` :
+                    `$sql = /** @lang SQL */\n     '${line}'`;
+            } else {
+                return usedoublequotes ?
+                    `     . " ${line}"` :
+                    `     . ' ${line}'`;
+            }
+        });
+        return lines.join('\n') + ';';
+    }
+
+    /**
+     * Returns the SQL query wrapped in some HTML markup for pasting
+     * @param sql
+     * @returns {string}
+     */
+    function wrapSQLInHTML(sql) {
+        let boldUpperCase = (group) => '<b>' + group.toUpperCase() + '</b>';
+        sql = sql.replace(/\r\n/g, '\n');
+        sql = '<pre>' + sql.replace(SQLKeywordRegexp, boldUpperCase) + '</pre>';
+        return sql;
+    }
+
+    window.addEventListener('load', function () {
+        let ta = document.getElementById('ta1');
+        let ta2 = document.getElementById('ta2');
+        let ta3 = document.getElementById('ta3');
+        setInterval(function () {
+            ta2.value = makePHPSQL(ta.value);
+            let mantisCode = wrapSQLInHTML(ta.value);
+            ta3.value = mantisCode;
+            document.getElementById('d4').innerHTML = mantisCode;
+        }, 500);
+    });
+
+
+</script>
+</html>
