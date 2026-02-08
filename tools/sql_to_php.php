@@ -97,7 +97,7 @@ ORDER BY nb DESC;</pre>
 <textarea class="sql-to-php__textarea" id="ta1"></textarea>
 <h2>Copy this and paste it in your PHP code for Dolibarr</h2>
 <textarea class="sql-to-php__textarea" id="ta2"></textarea>
-<details>
+<details class="bordered-details" >
     <summary>HTML Markup</summary>
     <h2>Copy this and paste it in a text input that allows simple HTML markup</h2>
     <textarea class="sql-to-php__textarea" id="ta3"></textarea>
