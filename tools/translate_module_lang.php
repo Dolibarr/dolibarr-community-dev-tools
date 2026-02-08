@@ -390,7 +390,7 @@ function __display_langs_stats(){
 							'title' => $langs->trans('MissingTranslations')
 						)
 					);
-					print dolGetBadge('-'.$langFileStats[$fileName]->missingTranslations, '', 'danger', '', $url, $params);
+					print '<a href="'.$url.'" >'.dolGetBadge('-'.$langFileStats[$fileName]->missingTranslations, '', 'danger', '', '', $params).'</a>';
 				}
 
 				print '</td>';
