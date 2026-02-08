@@ -72,3 +72,5 @@ UpdateFailed = La mise à jour a échoué, elle a normalement été annulée.
 PriceImpactInfo1=Permet de modifier en masse les prix d'un produit (tous les niveaux de prix).
 PriceImpactInfo2=La recherche s'effectue par référence ou morceau de référence, le wildcard (symbole pourcent) peut être interprété pour rechercher par morceaux de référence.
 PriceImpactInfo3=On peut choisir de mettre à jour uniquement les impacts de prix et non les prix eux-mêmes dans le cas des variantes de produits.
+SQFToPHP = SQL vers PHP
+SQFToPHPDesc = takes a pretty-printed pure SQL query and spurts PHP

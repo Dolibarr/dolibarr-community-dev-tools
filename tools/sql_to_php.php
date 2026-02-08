@@ -1,45 +1,65 @@
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>SQL to PHP</title>
-    <style>
-        textarea {
-            width: 100%;
-            height: 35vh;
-        }
+<?php require_once __DIR__ . '/inc/__tools_header.php';
 
-        h2 {
-            font-size: 60%;
-            font-family: Sans-Serif;
-        }
+require_once __DIR__ . '/../class/modulesManager.class.php';
+require_once __DIR__ . '/../class/moduleLangFileManager.class.php';
 
-        pre {
-            /*border: solid 1px #b6b6b6;*/
-            padding: 5px;
-            width: 100%;
-        }
-        table td, table th {
-            border: solid 1px #b6b6b6;
-        }
-        table { border-collapse: collapse; }
-    </style>
-</head>
-<body>
+$devToolScriptName =  'SQFToPHP';
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('devcommunitytools'.$devToolScriptName));
+
+// Parameters
+$action = GETPOST('action', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+$moduleName = GETPOST('module', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
+$currentLang = GETPOST('used-lang', 'aZ09');
+if(empty($currentLang)){
+	$currentLang =  $langs->defaultlang;
+}
+
+llxHeader('', $devToolScriptName, '', '', 0, 0, [], ['devcommunitytools/css/devtools.css']);
+
+// Subheader
+$linkback = '<a href="'.($backtopage ? $backtopage : dol_buildpath('/devcommunitytools/admin/tools.php', 1)).'">'.$langs->trans("BackToToolsList").'</a>';
+
+print load_fiche_titre($langs->trans($devToolScriptName), $linkback, 'title_setup');
+
+
+?>
+
+	<style>
+		textarea.sql-to-php__textarea {
+			width: 100%;
+			height: 35vh;
+		}
+
+
+		pre.sql-to-php__pre {
+			max-width: 100%;
+			overflow-x: scroll;
+			overflow-y: auto;
+			white-space: pre;
+		}
+
+	</style>
+
 <div>
-    <details>
-        <summary>README</summary>
-        <p>
-        This is a simple tool to convert a pretty-printed pure SQL query (for instance a query that you fine-tuned in
-            your IDE or in PHPMyAdmin) into PHP code you cane paste in your Dolibarr project, while keeping the result
-            readable and indented.
-        </p>
-        <p>There is no actual SQL parsing involved, only performs string replacements.
-            However, it works well enough to be used with most common Dolibar SQL queries.</p>
-        <h3>Example :</h3>
-        <table>
-            <thead><tr><th>What you paste</th><th>What you get</th></tr></thead>
-            <tbody><tr>
-                <td><pre>SELECT product.ref, COUNT(product.ref) AS nb, SUM(tl.total_ht) AS total, AVG(tl.total_ht) AS avg
+	<p>
+		This is a simple tool to convert a pretty-printed pure SQL query (for instance a query that you fine-tuned in
+		your IDE or in PHPMyAdmin) into PHP code you cane paste in your Dolibarr project, while keeping the result
+		readable and indented.
+	</p>
+	<p>There is no actual SQL parsing involved, only performs string replacements.
+	   However, it works well enough to be used with most common Dolibar SQL queries.</p>
+
+    <details class="bordered-details">
+        <summary>Example :</summary>
+
+		<div class="help-sql-container">
+			<div class="box">
+				<h4>What you paste</h4>
+				<pre class="sql-to-php__pre" >SELECT product.ref, COUNT(product.ref) AS nb, SUM(tl.total_ht) AS total, AVG(tl.total_ht) AS avg
 FROM llx_propal AS p,
      llx_propaldet AS tl,
      llx_product AS product
@@ -49,8 +69,11 @@ WHERE p.entity IN (1)
   AND tl.fk_product = product.rowid
   AND p.datep BETWEEN '2023-01-01 00:00:00' AND '2023-12-31 23:59:59'
 GROUP BY product.ref
-ORDER BY nb DESC;</pre></td>
-                <td><pre>$sql = /** @lang SQL */
+ORDER BY nb DESC;</pre>
+			</div>
+			<div class="box">
+				<h4 >What you get</h4>
+				<pre class="sql-to-php__pre" >$sql = /** @lang SQL */
      "SELECT product.ref, COUNT(product.ref) AS nb, SUM(tl.total_ht) AS total, AVG(tl.total_ht) AS avg"
      . " FROM " . $db->prefix() . "propal AS p,"
      . "      " . $db->prefix() . "propaldet AS tl,"
@@ -62,24 +85,26 @@ ORDER BY nb DESC;</pre></td>
      . "   AND p.datep BETWEEN '2023-01-01 00:00:00' AND '2023-12-31 23:59:59'"
      . " GROUP BY product.ref"
      . " ORDER BY nb DESC;";
-                </pre></td>
-            </tr></tbody>
-        </table>
+                </pre>
+			</div>
+		</div>
+
+
     </details>
     <br>
 </div>
 <h2>Paste SQL here</h2>
-<textarea id="ta1"></textarea>
+<textarea class="sql-to-php__textarea" id="ta1"></textarea>
 <h2>Copy this and paste it in your PHP code for Dolibarr</h2>
-<textarea id="ta2"></textarea>
+<textarea class="sql-to-php__textarea" id="ta2"></textarea>
 <details>
     <summary>HTML Markup</summary>
     <h2>Copy this and paste it in a text input that allows simple HTML markup</h2>
-    <textarea id="ta3"></textarea>
+    <textarea class="sql-to-php__textarea" id="ta3"></textarea>
     <h2>Preview of HTML markup</h2>
     <div id="d4"></div>
 </details>
-</body>
+
 <script type="text/javascript">
     let SQLKeywordRegexp = new RegExp(
         '\\b(SELECT|UPDATE|SET|UPDATE|INSERT INTO'
@@ -165,4 +190,12 @@ ORDER BY nb DESC;</pre></td>
 
 
 </script>
-</html>
+
+<div style="margin-top: 80px;"></div>
+
+<?php
+
+
+// Page end
+print dol_get_fiche_end();
+require_once __DIR__.'/inc/__tools_footer.php';
