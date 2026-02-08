@@ -99,3 +99,29 @@
 tr:hover .generate-translation-btn{
     opacity: 1;
 }
+
+
+
+details.bordered-details {
+	margin-top: 20px;
+	border: 1px solid #E0E0E0;
+	border-radius: 4px;
+	padding: 0.5em  0.5em  0;
+	box-sizing: border-box;
+	max-width: 100%;
+}
+
+details.bordered-details  summary {
+	font-weight: bold;
+	margin: -0.5em -0.5em 0;
+	padding: 0.5em;
+}
+
+details.bordered-details details[open] {
+	padding: 0.5em;
+}
+
+details.bordered-details[open] summary {
+	border-bottom: 1px solid #E0E0E0;
+	margin-bottom: 0.5em;
+}

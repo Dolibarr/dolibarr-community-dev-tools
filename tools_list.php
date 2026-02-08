@@ -152,6 +152,13 @@ if(!checkDevToolsAccess(false)){
 		'icon' => 'fa fa-dollar-sign'
 	);
 
+	$toolList[] = array(
+		'title'=> 'SQFToPHP',
+		'desc' => 'SQFToPHPDesc',
+		'file' => 'devcommunitytools/tools/sql_to_php.php',
+		'icon' => 'fa fa-code'
+	);
+
 	devToolsListSortByItemChildArrayKey($toolList,'title');
 
 
