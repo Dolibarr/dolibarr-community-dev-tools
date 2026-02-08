@@ -186,6 +186,7 @@ function __display_add_missing_tranlations_form(){
 	$fileName = GETPOST('file-name', 'aZ09');
 	$postedLang = GETPOST('trad','array:restricthtml');
 
+	$refreshIconClass = intval(DOL_VERSION) > 19 ? 'fa fa-sync':'fa fa-refresh';
 
 	if(!isset($moduleLangFileManager->translations[$currentLang][$fileName]) ){
 		setEventMessage('LangFileNotFound', 'errors');
@@ -232,6 +233,12 @@ function __display_add_missing_tranlations_form(){
 	$sourceFlag = \devCommunityTools\ModuleLangFileManager::getFlag($currentLang);
 	$targetFlag = \devCommunityTools\ModuleLangFileManager::getFlag($targetLang);
 
+	if((getDolGlobalString('DEVCOMMUNITYTOOLS_DEEPL_API_KEY') || defined('DEVCOMMUNITYTOOLS_DEEPL_API_KEY')) && !empty($newTrads) ){
+		print '<p class="right" >';
+		print ' <button href="" class="generate-translation-btn-all" ><span style="font-size: 0.8em;" class="'.$refreshIconClass.'"></span> '.$langs->trans('GenerateAllTranslations').'</button>';
+		print '</p>';
+	}
+
 	print '<table class="noborder " >';
 	foreach($newTrads as $tradKey => $newTrad){
 
@@ -251,7 +258,7 @@ function __display_add_missing_tranlations_form(){
 				.' data-language-code-src="'.strtoupper(\devCommunityTools\ModuleLangFileManager::getLangCode($currentLang)).'" '
 				.' data-language-code-dest="'.strtoupper(\devCommunityTools\ModuleLangFileManager::getLangCode($targetLang)).'" '
 				.' data-trad-key="'.$tradKeyEspaced.'" '
-				.' ><span style="font-size: 0.8em;" class="fa fa-refresh"></span> '.$langs->trans('GenerateTranslation').'</button>';
+				.' ><span style="font-size: 0.8em;" class="'.$refreshIconClass.'"></span> '.$langs->trans('GenerateTranslation').'</button>';
 		}
 
 		print '		<textarea class="dev-tool-lang-textarea" autoresize="1" disablenewline="1" id="trad_'.$tradKeyEspaced.'" name="trad['.$tradKeyEspaced.']" >'.htmlentities($newTrad).'</textarea>';
@@ -276,6 +283,11 @@ function __display_add_missing_tranlations_form(){
 	<script>
 		$(function() {
 			let translateConf = <?php print json_encode($jsConf); ?>;
+
+			$(".generate-translation-btn-all").on( "click", function(e) {
+				e.preventDefault();
+				$(".generate-translation-btn").trigger('click');
+			});
 
 			$(".generate-translation-btn").on( "click", function(e) {
 				e.preventDefault();
@@ -320,6 +332,7 @@ function __display_langs_stats(){
 	print '<p>'.$module->getDesc().'</p>';
 	print '<p>'.$langs->trans('CurrentLangIsX', $currentLang).'</p>';
 
+	$redoIconClass = intval(DOL_VERSION) > 19 ? 'fa fa-redo':'fa fa-repeat';
 
 	if(!$langsStats) {
 		return ;
@@ -338,7 +351,7 @@ function __display_langs_stats(){
 			print '			<form action="'.$_SERVER['PHP_SELF'].'" type="get" >';
 			print '			<input type="hidden" name="module" value="'.dol_escape_htmltag($moduleName).'">';
 			print 			$form->selectArray('used-lang', $moduleLangFileManager->langsAvailables, $currentLang);
-			print '			<button type="submit" title="'.$langs->trans('ChangeReferenceLanguage').'"><i class="fa fa-repeat"></i></button>';
+			print '			<button type="submit" title="'.$langs->trans('ChangeReferenceLanguage').'"><i class="'.$redoIconClass.'"></i></button>';
 			print '			</form >';
 			print '		</th>';
 			foreach ($allTranslationsFiles as $fileName){
