@@ -123,3 +123,6 @@ PriceImpactInfo2 = The wildcard (percent symbol) can be interpreted to search by
 PriceImpactInfo3 = In the case of product variants, you can choose to update only the price impacts and not the prices themselves.
 SQFToPHP = SQL to PHP
 SQFToPHPDesc = takes a pretty-printed pure SQL query and spurts PHP
+
+GenerateTranslation = Get translation
+GenerateAllTranslations = Get all translations

@@ -74,3 +74,5 @@ PriceImpactInfo2=La recherche s'effectue par référence ou morceau de référen
 PriceImpactInfo3=On peut choisir de mettre à jour uniquement les impacts de prix et non les prix eux-mêmes dans le cas des variantes de produits.
 SQFToPHP = SQL vers PHP
 SQFToPHPDesc = Prend une requête SQL pure, joliment formatée, et retourne du PHP
+GenerateTranslation = Obtenir une traduction
+GenerateAllTranslations = Obtenir toutes les traductions

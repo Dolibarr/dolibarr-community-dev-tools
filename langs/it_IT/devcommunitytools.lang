@@ -71,3 +71,5 @@ PriceImpactInfo2 = Il carattere jolly (simbolo percentuale) può essere interpre
 PriceImpactInfo3 = Nel caso delle varianti di prodotto, si può scegliere di aggiornare solo gli impatti dei prezzi e non i prezzi stessi.
 SQFToPHP = Da SQL a PHP
 SQFToPHPDesc = prende una query SQL pura stampata in modo carino e spruzza il PHP
+GenerateTranslation = Ottenere la traduzione
+GenerateAllTranslations = Ottenere tutte le traduzioni
